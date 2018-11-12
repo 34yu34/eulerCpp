@@ -26,3 +26,6 @@ $(LIBTRG): $(OFILE)
 %.o:%.cpp $(HFILE)
 	@$(CXX) $(CFLAGS) -c $< -o $@
 	@echo $@ created
+
+clean:
+	@rm *.out *.a lib/*.o
