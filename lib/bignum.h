@@ -1,3 +1,5 @@
+#ifndef BIGNUM_H
+#define BIGNUM_H
 #include <stdint.h>
 #include <cstring>
 #include <iostream>
@@ -23,7 +25,6 @@ private:
 
   void initDivision(const Bignum & num, Bignum & quotient, Bignum & denominator, int & index) const;
   void diviseStep(Bignum & reminder, Bignum & denominator, uint8_t * newData) const;
-
 
 public:
 
@@ -89,6 +90,5 @@ public:
   friend Bignum operator%(int num, const Bignum & num2);
   void operator%=(const Bignum & num);
   void operator%=(int num);
-
-
 };
+#endif // !BIGNUM_H
