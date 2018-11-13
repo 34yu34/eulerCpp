@@ -3,8 +3,9 @@ OFILE = $(CFILE:.cpp=.o)
 HFILE = $(CFILE:.cpp=.h)
 EULERFILE = $(wildcard euler*.cpp)
 EULEROUT = $(EULERFILE:.cpp=.out)
+INC = lib
 
-CFLAGS = -Wall -lm -g -O
+CFLAGS = -I $(INC) -MMD -Wall -lm -g -O
 ARFLAGS = rcs
 
 CXX = g++
@@ -13,11 +14,11 @@ LIBNAME = euler
 LIBTRG = lib$(LIBNAME).a
 
 
-all: $(EULEROUT) $(LIBTRG)
+all: $(LIBTRG) $(EULEROUT) 
 
 %.out:%.cpp
-	@$(CXX) -static $< -o $@ -L . -l $(LIBNAME)
-	@echo
+	@$(CXX) $(CFLAGS) -static $< -o $@ -L . -l $(LIBNAME)
+	@echo $@ created
 
 $(LIBTRG): $(OFILE)
 	@ar $(ARFLAGS) $(LIBTRG) $^
@@ -27,5 +28,7 @@ $(LIBTRG): $(OFILE)
 	@$(CXX) $(CFLAGS) -c $< -o $@
 	@echo $@ created
 
+-include *.d */*.d
+
 clean:
-	@rm *.out *.a lib/*.o
+	@rm *.out *.a **/*.o **/*.d 
