@@ -13,23 +13,38 @@ public:
     inline ~Iterator() {};
 
     inline Iterator & operator++();
+    inline Iterator & operator++(int);
     inline Iterator & operator--();
+    inline Iterator & operator--(int);
 
     T & operator*() {return _val;}
 
-    Iterator<T> & getNext() const {return *_next;}
-    Iterator<T> & getLast() const {return *_last;}
+    Iterator<T> & next() const {return *_next;}
+    Iterator<T> & last() const {return *_last;}
     Iterator<T> & setNext(Iterator<T> * next) {_next = next; next->_last = this; return *_next;}
     Iterator<T> & setLast(Iterator<T> * last) {_last = last; last->_next = this; return *_last;}
     
-    void operate(void (* fptr)(T val));
-    Iterator<T> * unlink() {_next->_last = _last; _last->_next = _next; return _next;}
+    void operate(T (* fptr)(T val));
+    Iterator<T> & unlink(bool forward = true);
 
 private:
     T _val;  
     Iterator<T> * _next;
     Iterator<T> * _last;
 };
+
+template<class T>
+inline Iterator<T> & Iterator<T>::operator++() {
+    Iterator * n = new Iterator(*this); 
+    *this = *_next;
+    _last = n; 
+    return *this;
+}
+
+template<class T>
+inline Iterator<T> & Iterator<T>::operator++(int) {
+    return this->operator++();
+}
 
 template<class T>
 inline Iterator<T> & Iterator<T>::operator--(){
@@ -40,10 +55,20 @@ inline Iterator<T> & Iterator<T>::operator--(){
 }
 
 template<class T>
-inline Iterator<T> & Iterator<T>::operator++() {
-    Iterator * n = new Iterator(*this); 
-    *this = *_next;
-    _last = n; 
+inline Iterator<T> & Iterator<T>::operator--(int) {
+    return this->operator--();
+}
+
+template<class T>
+void Iterator<T>::operate(T (* fptr)(T val)){
+    _val = func(_val);
+}
+
+template<class T>
+Iterator<T> & Iterator<T>::unlink(bool forward) {
+    _next->_last = _last; 
+    _last->_next = _next; 
+    *this = forward ? *_next : *_last;
     return *this;
 }
 
