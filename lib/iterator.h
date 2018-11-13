@@ -6,7 +6,7 @@ class Iterator
 {
 public:
     inline Iterator(): _val(*(T *)nullptr), _next(nullptr), _last(nullptr) {;};
-    inline Iterator(const T & val):_val(val), _next(nullptr), _last(nullptr) {;}
+    inline Iterator(const T & val):_val(val), _next(new Iterator()), _last(new Iterator()) {;}
     inline Iterator(const Iterator<T> & it):_val(it._val), _next(it._next), _last(it._last) {;}
     inline void operator=(const T & val) {_val = val;}
     inline void operator=(const Iterator<T> & it) {_val = it._val; _next = it._next; _last = it._last;}
