@@ -31,4 +31,4 @@ $(LIBTRG): $(OFILE)
 -include *.d */*.d
 
 clean:
-	@rm *.out *.a **/*.o **/*.d 
+	@rm *.out *.a **/*.o **/*.d *.d
