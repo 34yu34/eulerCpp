@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "iostream": "cpp"
-    }
+    },
+    "clang.cxxflags": ["-std=c++17"]
 }
