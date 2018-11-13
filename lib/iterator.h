@@ -5,10 +5,10 @@ template <class T>
 class Iterator
 {
 public:
-    inline Iterator(): _val(*(T *)nullptr), _next(nullptr), _last(nullptr) {;};
-    inline Iterator(const T & val):_val(val), _next(new Iterator()), _last(new Iterator()) {;}
+    inline Iterator(): _val(T()), _next(nullptr), _last(nullptr) {;};
+    inline Iterator(const T & val):_val(val) {setNext(new Iterator<T>()); setLast(new Iterator<T>());}
     inline Iterator(const Iterator<T> & it):_val(it._val), _next(it._next), _last(it._last) {;}
-    inline void operator=(const T & val) {_val = val;}
+    inline void operator=(const T & val);
     inline void operator=(const Iterator<T> & it) {_val = it._val; _next = it._next; _last = it._last;}
     inline ~Iterator() {};
 
@@ -32,6 +32,17 @@ private:
     Iterator<T> * _next;
     Iterator<T> * _last;
 };
+
+template<class T>
+inline void Iterator<T>::operator=(const T & val) 
+{
+    _val = val;
+    if (_next == nullptr) {
+        setNext(new Iterator<T>());
+    } else if (_last == nullptr) {
+        setLast(new Iterator<T>());
+    }
+}
 
 template<class T>
 inline Iterator<T> & Iterator<T>::operator++() {
