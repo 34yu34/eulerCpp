@@ -54,7 +54,8 @@ inline Iterator<T> & Iterator<T>::operator++() {
 
 template<class T>
 inline Iterator<T> & Iterator<T>::operator++(int) {
-    return this->operator++();
+    this->operator++();
+    return *(this->_last);
 }
 
 template<class T>
@@ -67,7 +68,8 @@ inline Iterator<T> & Iterator<T>::operator--(){
 
 template<class T>
 inline Iterator<T> & Iterator<T>::operator--(int) {
-    return this->operator--();
+    this->operator--();
+    return *(this->_next);
 }
 
 template<class T>
