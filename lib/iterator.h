@@ -30,7 +30,8 @@ public:
     Iterator<T> & last() const {return *_last;}
     Iterator<T> & setNext(Iterator<T> * next) {_next = next; next->_last = this; return *_next;}
     Iterator<T> & setLast(Iterator<T> * last) {_last = last; last->_next = this; return *_last;}
-    
+    Iterator<T> & add(const T & val, bool forward = true);
+
     void operate(T (* fptr)(T val));
     Iterator<T> & unlink(bool forward = true);
 
@@ -77,6 +78,22 @@ template<class T>
 inline Iterator<T> & Iterator<T>::operator--(int) {
     this->operator--();
     return *(this->_next);
+}
+
+template<class T>
+Iterator<T> & Iterator<T>::add(const T & val, bool forward) {
+    Iterator<T> * it = new Iterator<T>(val);
+    Iterator<T> * n;
+    if (forward) {
+        n = _next;
+        this->setNext(it);
+        it->setNext(n);
+    } else {
+        n = _last;
+        this->setLast(it);
+        it->setLast(n);
+    }
+    return *it;
 }
 
 template<class T>
