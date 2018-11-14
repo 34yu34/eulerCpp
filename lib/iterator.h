@@ -1,6 +1,8 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
+#include "iostream"
+
 template <class T>
 class Iterator
 {
@@ -99,7 +101,7 @@ Iterator<T> & Iterator<T>::add(T  val, bool forward) {
 
 template<class T>
 void Iterator<T>::operate(T (* fptr)(T val)){
-    *_val = func(*_val);
+    (*_val) = fptr(*_val);
 }
 
 template<class T>

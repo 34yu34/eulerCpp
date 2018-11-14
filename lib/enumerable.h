@@ -2,6 +2,7 @@
 #define ENUMERABLE_H
 
 #include "iterator.h"
+#include "iostream"
 
 template<class T>
 class Enumerable
@@ -23,6 +24,8 @@ public:
 
     T next() {return _forward ? *(*_curr++) : *(*_curr--);}
     unsigned int size() {return _size;}
+
+    Enumerable<T> & map(T (* fptr)(T val));
 };
 
 template <class T>
@@ -36,6 +39,15 @@ Enumerable<T>::Enumerable(const T & start,const T & end, const int & bounce) {
         _size++;
     }
     _curr = _begin;
+}
+
+template <class T>
+Enumerable<T> & Enumerable<T>::map(T (* fptr)(T val)) {
+    for (auto it = *_begin; it != *_end; it++) {
+        it.operate(fptr);
+        std::cout << *it << std::endl;
+    }
+    return *this;
 }
 
 #endif // !ENUMERABLE_H
