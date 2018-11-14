@@ -17,6 +17,13 @@ public:
     inline Iterator & operator--();
     inline Iterator & operator--(int);
 
+    inline Iterator & operator+(int time) const {Iterator<T> * n = this;for (int i = 0; i< time; i++){n = n->_next;} return *n;}
+    inline Iterator & operator+=(int time) {for (int i = 0; i< time; i++){this->operator++();} return *this;}
+    inline Iterator & operator-(int time) const {Iterator<T> * n = this;for (int i = 0; i< time; i++){n = n->_last;} return *n;}
+    inline Iterator & operator-=(int time) {for (int i = 0; i< time; i++){this->operator--();} return *this;}
+
+    inline bool operator==(const Iterator & it) {return (it._val == _val) && (it._next == _next) && (it._last == _last);}
+
     T & operator*() {return _val;}
 
     Iterator<T> & next() const {return *_next;}
