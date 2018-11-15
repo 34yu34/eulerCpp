@@ -13,11 +13,8 @@ int main(int argc, char const * argv[])
   e = 45;
   a.setNext(&b).setNext(&c).setNext(&d);
   a.setLast(&e);
-  (++(++a)).unlink();
-  cout << *(a) << *(--a) << *(--a) << *(a--) << *a << endl;
-
+  cout << *(a.next()) << *(a.next().next()) << endl;
   Iterator<int> z = 6;
   z.add(2).add(3).add(4,false);
-  cout << *(z++) << *(++z) << *(++z) << endl;
   return 0;
 }

@@ -26,6 +26,7 @@ public:
     unsigned int size() {return _size;}
 
     Enumerable<T> & map(T (* fptr)(T val));
+    Enumerable<T> & select(bool (* fptr)(T val));
 };
 
 template <class T>
@@ -43,10 +44,28 @@ Enumerable<T>::Enumerable(const T & start,const T & end, const int & bounce) {
 
 template <class T>
 Enumerable<T> & Enumerable<T>::map(T (* fptr)(T val)) {
-    for (auto it = *_begin; it != *_end; it++) {
-        it.operate(fptr);
-        std::cout << *it << std::endl;
+    for (auto it = _begin; it != _end; it =  it->pNext()) {
+        it->operate(fptr);
     }
+    return *this;
+}
+
+template <class T>
+Enumerable<T> & Enumerable<T>::select(bool (* fptr)(T val)) {
+    Iterator<T> * it = _begin;
+    bool begining = true;
+    while (it != _end) {
+        if (!fptr(*(*it))) {
+            it = it->unlink();
+            if (begining) {
+                _begin = it;
+            }
+        } else {
+            begining = false;
+            it = it->pNext();
+        };
+    }
+    std::cout << "blah";
     return *this;
 }
 
