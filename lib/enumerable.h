@@ -16,7 +16,10 @@ private:
 public:
     Enumerable(const T & start = T(), const T & end = (T()+1), const int & bounce = 1);
     ~Enumerable(){;}
-    
+
+    static Enumerable<T> fibonacci(int time);
+    static Enumerable<T> fibonacciUntil(T until);
+
     Iterator<T> & begin() {return *_begin;}
     Iterator<T> * pBegin() {return _begin;}
     Iterator<T> & end() {return *_end;}
@@ -33,9 +36,9 @@ public:
 };
 
 template <class T>
-Enumerable<T>::Enumerable(const T & start,const T & end, const int & bounce) {
+Enumerable<T>::Enumerable(const T & start, const T & end, const int & bounce) {
     _begin = new Iterator<T>(start);
-    _end = &_begin->next();
+    _end = _begin->pNext();
     _size = 1;
     _forward = true;
     for (T i = start + bounce; i != end; i += bounce) {
@@ -43,6 +46,30 @@ Enumerable<T>::Enumerable(const T & start,const T & end, const int & bounce) {
         _size++;
     }
     _curr = _begin;
+}
+
+template <class T>
+Enumerable<T> Enumerable<T>::fibonacci(int time) {
+    Enumerable<T> en = Enumerable<T>();
+    en._begin = new Iterator<T>(T() + 1);
+    en._end = en._begin->pNext();
+    en._end->add((T() + 1), false);
+    for (int i = 1; i < time-1; i++) {
+        en._end->add(*(*(en._end)-1) + *(*(en._end)-2), false);
+    }
+    return en;
+}
+
+template <class T>
+Enumerable<T> Enumerable<T>::fibonacciUntil(T until) {
+    Enumerable<T> en = Enumerable<T>();
+    en._begin = new Iterator<T>(T() + 1);
+    en._end = en._begin->pNext();
+    en._end->add((T() + 1), false);
+    while (*(en._end->last())< until) {
+        en._end->add(*(*(en._end)-1) + *(*(en._end)-2), false);
+    }
+    return en;
 }
 
 template <class T>
@@ -60,6 +87,7 @@ Enumerable<T> & Enumerable<T>::select(bool (* fptr)(T val)) {
     while (it != _end) {
         if (!fptr(*(*it))) {
             it = it->unlink();
+            _size--;
             if (begining) {
                 _begin = it;
             }
@@ -74,7 +102,7 @@ Enumerable<T> & Enumerable<T>::select(bool (* fptr)(T val)) {
 template <class T>
 T Enumerable<T>::inject(T (* fptr)(T sum, T val)) {
     Iterator<T> * it = _begin->pNext();
-    T sum = *(*it);
+    T sum = *(*_begin);
     while (it != _end) {
         sum = fptr(sum, *(*it));
         it = it->pNext();

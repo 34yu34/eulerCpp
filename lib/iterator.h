@@ -14,8 +14,8 @@ public:
     inline void operator=(const Iterator<T> & it) {_val = it._val; _next = it._next; _last = it._last;}
     inline ~Iterator() {};
 
-    inline Iterator & operator+(int time) const {Iterator<T> * n = this;for (int i = 0; i< time; i++){n = n->_next;} return *n;}
-    inline Iterator & operator-(int time) const {Iterator<T> * n = this;for (int i = 0; i< time; i++){n = n->_last;} return *n;}
+    inline Iterator & operator+(int time) const {Iterator<T> * n = this->_next;for (int i = 0; i< time-1; i++){n = n->_next;} return *n;}
+    inline Iterator & operator-(int time) const {Iterator<T> * n = this->_last;for (int i = 0; i< time-1; i++){n = n->_last;} return *n;}
 
     inline bool operator==(const Iterator & it) {return (it._val == _val);}
     inline bool operator!=(const Iterator & it) {return !(this->operator==(it));}
