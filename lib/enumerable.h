@@ -27,6 +27,7 @@ public:
 
     Enumerable<T> & map(T (* fptr)(T val));
     Enumerable<T> & select(bool (* fptr)(T val));
+    void each(void (* fptr)(T val));
     T inject(T (* fptr)(T sum, T val));
     T sum();
 };
@@ -84,6 +85,15 @@ T Enumerable<T>::inject(T (* fptr)(T sum, T val)) {
 template <class T>
 T Enumerable<T>::sum() {
     return this->inject([](T sum, T val){return sum + val;});
+}
+
+template <class T>
+void Enumerable<T>::each(void (* fptr)(T val)) {
+    Iterator<T> * it = _begin;
+    while (it != _end) {
+        fptr(*(*it));
+        it = it->pNext();
+    }
 }
 
 #endif // !ENUMERABLE_H
