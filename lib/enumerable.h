@@ -51,11 +51,18 @@ Enumerable<T>::Enumerable(const T & start, const T & end, const int & bounce) {
     }
     _curr = _begin;
 }
+
 template <class T>
 Enumerable<T>::Enumerable(const T * data, int size) {
-
+    _begin = new Iterator<T>(data[0]);
+    _end = _begin->pNext();
+    _size = 1;
+    _forward = true;
+    for (int i = 1; i < size; i++) {
+        _end->add(data[i], false);
+        _size++;
+    }
 }
-
 
 template <class T>
 Enumerable<T> Enumerable<T>::fibonacci(int time) {
