@@ -261,6 +261,21 @@ bool operator==(int num, const Bignum & num2)
   return num2 == (num);
 }
 
+bool Bignum::operator!=(const Bignum & num) const
+{
+  return !(*this == num);
+}
+
+bool Bignum::operator!=(int num) const
+{
+  return *this != Bignum(num);
+}
+
+bool operator!=(int num, const Bignum & num2)
+{
+  return num2 == (num);
+}
+
 /*********************************************************************
 **********************************************************************
 *

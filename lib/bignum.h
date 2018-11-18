@@ -52,6 +52,9 @@ public:
   bool operator==(const Bignum & num) const;
   bool operator==(int num) const;
   friend bool operator==(int num, const Bignum & num2);
+  bool operator!=(const Bignum & num) const;
+  bool operator!=(int num) const;
+  friend bool operator!=(int num, const Bignum & num2);
   bool operator>=(const Bignum & num) const;
   bool operator>=(int num) const;
   friend bool operator>=(int num, const Bignum & num2);
