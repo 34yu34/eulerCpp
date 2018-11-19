@@ -16,7 +16,8 @@ private:
 
     void addFactor(T & num, const T & val, bool & isFirst);
 public:
-    Enumerable(const T & start = T(), const T & end = (T()+1), const int & bounce = 1);
+    Enumerable() {_begin = new Iterator<T>(); _end = _begin->pNext(); _curr = _begin; _size = 1; _forward = true;}
+    Enumerable(const T & start , const T & end , const int & bounce = 1);
     Enumerable(const T * data, int size);
     ~Enumerable(){;}
 
@@ -29,10 +30,13 @@ public:
     Iterator<T> & end() {return *_end;}
     Iterator<T> * pEnd() {return _end;}
 
+    void reset(T val = T()) { _begin = new Iterator<T>(val);_end = _begin->pNext(); _size = 1; _forward = true;}
+    void push(T val = T()) { _forward ? _end->add(val, false) : _begin->pLast()->add(val);}
     T next() {return _forward ? *(*_curr++) : *(*_curr--);}
     unsigned int size() {return _size;}
 
     Enumerable<T> & map(T (* fptr)(T val));
+    template <class U> Enumerable<U> map(U (* fptr)(T val));
     Enumerable<T> & select(bool (* fptr)(T val));
     void each(void (* fptr)(T val));
     T inject(T (* fptr)(T sum, T val));
@@ -102,7 +106,6 @@ Enumerable<T> Enumerable<T>::factors(const T & num) {
     en.addFactor(max, T() + 3, isFirst);
     en.addFactor(max, T() + 5, isFirst);
     en.addFactor(max, T() + 7, isFirst);
-    T i = 12;
     for (T i = 12; i * i < num; i+= 6) {
         en.addFactor(max, i-1, isFirst);
         en.addFactor(max, i+1, isFirst);
@@ -131,6 +134,17 @@ Enumerable<T> & Enumerable<T>::map(T (* fptr)(T val)) {
         it->operate(fptr);
     }
     return *this;
+}
+
+template <class T>
+template <class U>
+Enumerable<U> Enumerable<T>::map(U (* fptr)(T val)) {
+    Enumerable<U> en;
+    en.reset(fptr(*(*(_begin))));
+    for (Iterator<T> * it = _begin->pNext(); it != _end; it =  it->pNext()) {
+        en.push(fptr(*(*(it))));
+    }
+    return en;
 }
 
 template <class T>

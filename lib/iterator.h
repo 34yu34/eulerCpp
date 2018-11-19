@@ -31,6 +31,7 @@ public:
     Iterator<T> & add( T  val, bool forward = true);
 
     void operate(T (* fptr)(T val));
+    template<class U> Iterator<U> * operate(U (* fptr)(T val));
     Iterator<T> * unlink(bool forward = true);
 
 private:
@@ -70,6 +71,13 @@ template<class T>
 void Iterator<T>::operate(T (* fptr)(T val)){
     (*_val) = fptr(*_val);
 }
+
+template<class T>
+template<class U>
+Iterator<U> * Iterator<T>::operate(U (* fptr)(T val)){    
+    return new Iterator<U>(fptr(*_val));
+}
+
 
 template<class T>
 Iterator<T> * Iterator<T>::unlink(bool forward) {

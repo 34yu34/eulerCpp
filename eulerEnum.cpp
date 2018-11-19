@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
         }
     }
     Enumerable<int> b = Enumerable<int>(arr, 100);
-    b.each([](int a){cout << a << endl;});
+    Enumerable<double> c = b.map<double>([](int a)->double {return a;});
+    c.each([](double a){cout << a << endl;});
     return 0;
 }

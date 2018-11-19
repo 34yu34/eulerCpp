@@ -6,10 +6,18 @@
 
 namespace Number
 {
+    template<class T>
+    struct Factor
+    {
+        T factor;
+        int repetition;
+        T value;
+    };
+    
     template <class T> bool isPalindrome(T num);
     template <class T> T max(T num1, T num2) {return num1 > num2 ? num1 : num2;}
     template <class T> void print(T val) {std::cout << val << std::endl;}
-
+    template <class T> Factor<T> * factorize(T num);
 } // Number
 
 template <class T>
@@ -28,4 +36,5 @@ bool Number::isPalindrome(T num) {
         }
         return true;
 }
+
 #endif // !NUMBER_H
