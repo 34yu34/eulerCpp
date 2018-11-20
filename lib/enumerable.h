@@ -2,6 +2,7 @@
 #define ENUMERABLE_H
 
 #include "iterator.h"
+#include "number.h"
 #include "iostream"
 
 template<class T>
@@ -14,8 +15,10 @@ private:
     Iterator<T> * _begin;
     Iterator<T> * _curr;
 
-    void addFactor(T & num, const T & val, bool & isFirst);
+    static void addFactor(T & num, const T & val, bool & isFirst, Enumerable<Number::Factor<T>>& en);
+
 public:
+    template <class> friend class Enumerable;
     Enumerable() {_begin = new Iterator<T>(); _end = _begin->pNext(); _curr = _begin; _size = 1; _forward = true;}
     Enumerable(const T & start , const T & end , const int & bounce = 1);
     Enumerable(const T * data, int size);
@@ -23,7 +26,7 @@ public:
 
     static Enumerable<T> fibonacci(int time);
     static Enumerable<T> fibonacciUntil(T until);
-    static Enumerable<T> factors(const T & num);
+    static Enumerable<Number::Factor<T>> factors(T num);
 
     Iterator<T> & begin() {return *_begin;}
     Iterator<T> * pBegin() {return _begin;}
@@ -40,6 +43,7 @@ public:
     Enumerable<T> & select(bool (* fptr)(T val));
     void each(void (* fptr)(T val));
     T inject(T (* fptr)(T sum, T val));
+    template <class U> U inject(U & obj, U & (* fptr)(U & obj, T val));
     T sum();
 };
 
@@ -97,34 +101,40 @@ Enumerable<T> Enumerable<T>::fibonacciUntil(T until) {
 }
 
 template <class T>
-Enumerable<T> Enumerable<T>::factors(const T & num) {
+Enumerable<Number::Factor<T>> Enumerable<T>::factors(T num) {
     T max = num;
-    Enumerable<T> en = Enumerable<T>();
+    Enumerable<Number::Factor<T>> en = Enumerable<Number::Factor<T>>();
     bool isFirst = true;
     en._size = 0;
-    en.addFactor(max, T() + 2, isFirst);
-    en.addFactor(max, T() + 3, isFirst);
-    en.addFactor(max, T() + 5, isFirst);
-    en.addFactor(max, T() + 7, isFirst);
+    addFactor(max, T() + 2, isFirst, en);
+    addFactor(max, T() + 3, isFirst, en);
+    addFactor(max, T() + 5, isFirst, en);
+    addFactor(max, T() + 7, isFirst, en);
     for (T i = 12; i * i < num; i+= 6) {
-        en.addFactor(max, i-1, isFirst);
-        en.addFactor(max, i+1, isFirst);
+        addFactor(max, i-1, isFirst, en);
+        addFactor(max, i+1, isFirst, en);
     }
     return en;
 }
 
 template <class T>
-void Enumerable<T>::addFactor(T & num, const T & val, bool & isFirst) {
+void Enumerable<T>::addFactor(T & num, const T & val, bool & isFirst, Enumerable<Number::Factor<T>> & en) {
     if (num % val == 0 && num != 0) {
+        Number::Factor<T> fact;
+        fact.repetition = 0;
+        fact.factor = val;
+        while (num % val == 0 && num != 0) { 
+            num /= val;
+            fact.repetition += 1;
+        }
         if (isFirst) {
-            *(_begin) = val;
-            _end = _begin->pNext();
+            *(en._begin) = fact;
+            en._end = en._begin->pNext();
             isFirst = false;
         } else {
-            _end->add(val, false);
+            en._end->add(fact, false);
         }
-        _size++;
-        while (num % val == 0 && num != 0) { num /= val;}
+        en._size++;
     }
 }
 

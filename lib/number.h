@@ -11,13 +11,12 @@ namespace Number
     {
         T factor;
         int repetition;
-        T value;
     };
     
     template <class T> bool isPalindrome(T num);
     template <class T> T max(T num1, T num2) {return num1 > num2 ? num1 : num2;}
     template <class T> void print(T val) {std::cout << val << std::endl;}
-    template <class T> Factor<T> * factorize(T num);
+    template <class T> T pow(T val1, T val2) {T res = 1;for (T i = 0; i < val2; i++){ res *= val1;} return res;}
 } // Number
 
 template <class T>
