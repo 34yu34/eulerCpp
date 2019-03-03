@@ -1,6 +1,7 @@
 #ifndef ENUMERABLE_H
 #define ENUMERABLE_H
 
+#include "functional"
 #include "iterator.h"
 #include "number.h"
 #include "iostream"
@@ -15,7 +16,7 @@ private:
     Iterator<T> * _begin;
     Iterator<T> * _curr;
 
-    static void addFactor(T & num, const T & val, bool & isFirst, Enumerable<Number::Factor<T>>& en);
+    void initEnum();
 
 public:
     template <class> friend class Enumerable;
@@ -26,7 +27,6 @@ public:
 
     static Enumerable<T> fibonacci(int time);
     static Enumerable<T> fibonacciUntil(T until);
-    static Enumerable<Number::Factor<T>> factors(T num);
 
     Iterator<T> & begin() {return *_begin;}
     Iterator<T> * pBegin() {return _begin;}
@@ -34,16 +34,16 @@ public:
     Iterator<T> * pEnd() {return _end;}
 
     void reset(T val = T()) { _begin = new Iterator<T>(val);_end = _begin->pNext(); _size = 1; _forward = true;}
-    void push(T val = T()) { _forward ? _end->add(val, false) : _begin->pLast()->add(val);}
+    Enumerable<T> & push(T val = T()) { _forward ? _end->add(val, false) : _begin->pLast()->add(val); return *this;}
     T next() {return _forward ? *(*_curr++) : *(*_curr--);}
     unsigned int size() {return _size;}
 
-    Enumerable<T> & map(T (* fptr)(T val));
-    template <class U> Enumerable<U> map(U (* fptr)(T val));
-    Enumerable<T> & select(bool (* fptr)(T val));
-    void each(void (* fptr)(T val));
-    T inject(T (* fptr)(T sum, T val));
-    template <class U> U inject(U & obj, U & (* fptr)(U & obj, T val));
+    Enumerable<T> & map(std::function<T (T)> function);
+    template <class U> Enumerable<U> map(std::function<U(T)> function);
+    template <typename F> Enumerable<T> & select(F function);
+    template <typename F> void each(F function);
+    template <typename F> T inject(F function) const;
+    template <class U, typename F> U & inject(U & obj, F function) const;
     T sum();
 };
 
@@ -101,45 +101,7 @@ Enumerable<T> Enumerable<T>::fibonacciUntil(T until) {
 }
 
 template <class T>
-Enumerable<Number::Factor<T>> Enumerable<T>::factors(T num) {
-    T max = num;
-    Enumerable<Number::Factor<T>> en = Enumerable<Number::Factor<T>>();
-    bool isFirst = true;
-    en._size = 0;
-    addFactor(max, T() + 2, isFirst, en);
-    addFactor(max, T() + 3, isFirst, en);
-    addFactor(max, T() + 5, isFirst, en);
-    addFactor(max, T() + 7, isFirst, en);
-    for (T i = 12; i * i < num; i+= 6) {
-        addFactor(max, i-1, isFirst, en);
-        addFactor(max, i+1, isFirst, en);
-    }
-    return en;
-}
-
-template <class T>
-void Enumerable<T>::addFactor(T & num, const T & val, bool & isFirst, Enumerable<Number::Factor<T>> & en) {
-    if (num % val == 0 && num != 0) {
-        Number::Factor<T> fact;
-        fact.repetition = 0;
-        fact.factor = val;
-        while (num % val == 0 && num != 0) { 
-            num /= val;
-            fact.repetition += 1;
-        }
-        if (isFirst) {
-            *(en._begin) = fact;
-            en._end = en._begin->pNext();
-            isFirst = false;
-        } else {
-            en._end->add(fact, false);
-        }
-        en._size++;
-    }
-}
-
-template <class T>
-Enumerable<T> & Enumerable<T>::map(T (* fptr)(T val)) {
+Enumerable<T> & Enumerable<T>::map(std::function<T(T)> fptr) {
     for (auto it = _begin; it != _end; it =  it->pNext()) {
         it->operate(fptr);
     }
@@ -148,7 +110,7 @@ Enumerable<T> & Enumerable<T>::map(T (* fptr)(T val)) {
 
 template <class T>
 template <class U>
-Enumerable<U> Enumerable<T>::map(U (* fptr)(T val)) {
+Enumerable<U> Enumerable<T>::map(std::function<U(T)> fptr) {
     Enumerable<U> en;
     en.reset(fptr(*(*(_begin))));
     for (Iterator<T> * it = _begin->pNext(); it != _end; it =  it->pNext()) {
@@ -158,7 +120,8 @@ Enumerable<U> Enumerable<T>::map(U (* fptr)(T val)) {
 }
 
 template <class T>
-Enumerable<T> & Enumerable<T>::select(bool (* fptr)(T val)) {
+template <typename F>
+Enumerable<T> & Enumerable<T>::select(F fptr) {
     Iterator<T> * it = _begin;
     bool begining = true;
     while (it != _end) {
@@ -177,7 +140,9 @@ Enumerable<T> & Enumerable<T>::select(bool (* fptr)(T val)) {
 }
 
 template <class T>
-T Enumerable<T>::inject(T (* fptr)(T sum, T val)) {
+template <typename F>
+T Enumerable<T>::inject(F fptr) const 
+{
     Iterator<T> * it = _begin->pNext();
     T sum = *(*_begin);
     while (it != _end) {
@@ -188,12 +153,25 @@ T Enumerable<T>::inject(T (* fptr)(T sum, T val)) {
 }
 
 template <class T>
-T Enumerable<T>::sum() {
-    return this->inject([](T sum, T val){return sum + val;});
+template <class U, typename F>
+U & Enumerable<T>::inject(U & obj, F fptr) const 
+{
+    Iterator<T> * it = _begin;
+    while (it != _end) {
+        fptr(obj, *(*(it)));
+        it = it->pNext();
+    }
+    return obj;
 }
 
 template <class T>
-void Enumerable<T>::each(void (* fptr)(T val)) {
+T Enumerable<T>::sum() {
+    return this->inject([](const T & sum,const T & val){return sum + val;});
+}
+
+template <class T>
+template <typename F>
+void Enumerable<T>::each(F fptr) {
     Iterator<T> * it = _begin;
     while (it != _end) {
         fptr(*(*it));

@@ -30,8 +30,8 @@ public:
     Iterator<T> & setLast(Iterator<T> * last) {_last = last; last->_next = this; return *_last;}
     Iterator<T> & add( T  val, bool forward = true);
 
-    void operate(T (* fptr)(T val));
-    template<class U> Iterator<U> * operate(U (* fptr)(T val));
+    template <typename F> void operate(F function);
+    template<class U, typename F> Iterator<U> * operate(F function);
     Iterator<T> * unlink(bool forward = true);
 
 private:
@@ -68,13 +68,14 @@ Iterator<T> & Iterator<T>::add(T  val, bool forward) {
 }
 
 template<class T>
-void Iterator<T>::operate(T (* fptr)(T val)){
+template<typename F>
+void Iterator<T>::operate(F fptr){
     (*_val) = fptr(*_val);
 }
 
 template<class T>
-template<class U>
-Iterator<U> * Iterator<T>::operate(U (* fptr)(T val)){    
+template<class U, typename F>
+Iterator<U> * Iterator<T>::operate(F fptr){    
     return new Iterator<U>(fptr(*_val));
 }
 
