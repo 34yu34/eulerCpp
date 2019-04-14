@@ -1,182 +1,505 @@
-#ifndef ENUMERABLE_H
-#define ENUMERABLE_H
+#pragma once
 
-#include "functional"
-#include "iterator.h"
-#include "number.h"
-#include "iostream"
+#include <iostream>
+#include <stdint.h>
+#include <exception>
 
-template<class T>
+template <class T>
 class Enumerable
 {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////	Class Node									////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-    bool _forward;
-    unsigned int _size;
-    Iterator<T> * _end;
-    Iterator<T> * _begin;
-    Iterator<T> * _curr;
+	template <class U>
+	class Node
+	{
+	private:
+		T * val_;
+		Node * next_;
+		Node * last_;
 
-    void initEnum();
+	public:
+		//////////////////////////////////////////////////////////////////////////
+		// constructors
+		//////////////////////////////////////////////////////////////////////////
+		Node() : val_(nullptr), next_(nullptr), last_(nullptr) {};
+		Node(const T & val) : val_(new T(val)), next_(nullptr), last_(nullptr) {};
+		Node(const Node & node) { copy_data(node); }
+		void operator=(const Node & node) { copy_data(node); }
 
+		~Node()
+		{
+			delete val_;
+			next_ = nullptr;
+			last_ = nullptr;
+		}
+
+	private:
+		// This function is used to copy a node data
+		void copy_data(const Node & node)
+		{
+			val_ = new T(&node->val_);
+
+			Node * last_next = this;
+			Node * next = node.next_;
+			Node * copy_next = next_;
+			while (next != nullptr)
+			{
+				copy_next = new Node(next->val_);
+				copy_next->last_ = last_next;
+				last_next = copy_next;
+				copy_next = copy_next->next_;
+				next = next->next_;
+			}
+
+			Node * next_last = this;
+			Node * last = node.last_;
+			Node * copy_last = last_;
+			while (last != nullptr)
+			{
+				copy_last = new Node(last->val_);
+				copy_last->next_ = next_last;
+				next_last = copy_last;
+				copy_last = copy_last->last_;
+				last = last->last_;
+			}
+		};
+
+	public:
+		//////////////////////////////////////////////////////////////////////////
+		// Getters
+		//////////////////////////////////////////////////////////////////////////
+		T & get_val() { return *val_; }
+		const T & get_val() const { return *val_; }
+		Node & get_next() { return *next_; }
+		Node & get_last() { return *last_; }
+
+		//////////////////////////////////////////////////////////////////////////
+		// Setters
+		//////////////////////////////////////////////////////////////////////////
+		// val setters
+		Node & set_val(const T & val) { val_ = new T(val); return *this; };
+
+		// next setters
+		Node & set_next(Node * node) { next_ = node; node->last_ = this; return *this; }
+		Node & set_next(const T & val) 
+		{
+			Node * next = new Node(val);
+			Node * ancient_next = next_;
+			next_ = next;
+			next_->last_ = this;
+			next_->next_ = ancient_next;
+			ancient_next->last_ = next_;
+			return *this;
+		}
+
+		T remove_next()
+		{
+			if (next_ != nullptr)
+			{
+				Node * node = next_;
+				T val = node->get_val();
+				next_ = next_->next_;
+				next_->last_ = this;
+				delete node;
+				return val;
+			}
+			throw std::out_of_range("No element to delete before the first one");
+		}
+
+		// last setters
+		Node & set_last(Node * node) { last_ = node; node->next_ = this; return *this; }
+		Node & set_last(const T & val)
+		{
+			Node * last = new Node(val);
+			Node * ancient_last = last_;
+			last_ = last;
+			last_->next_ = this;
+			last_->last_ = ancient_last;
+			ancient_last->next_ = last_;
+			return *this;
+		}
+
+		T remove_last()
+		{
+			if (last_ != nullptr)
+			{
+				Node * node = last_;
+				T val = node->get_val();
+				last_ = last_->last_;
+				last_->next_ = this;
+				delete node;
+				return val;
+			}
+			throw std::out_of_range("No element to delete after the last one");
+		}
+	};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////	Class Iterator									////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-    template <class> friend class Enumerable;
-    Enumerable() {_begin = new Iterator<T>(); _end = _begin->pNext(); _curr = _begin; _size = 1; _forward = true;}
-    Enumerable(const T & start , const T & end , const int & bounce = 1);
-    Enumerable(const T * data, int size);
-    ~Enumerable(){;}
+	template <class U>
+	class Iterator
+	{
+	private:
+		Node<T> * node_;
+	public:
+		//////////////////////////////////////////////////////////////////////////
+		// Constructor
+		//////////////////////////////////////////////////////////////////////////
+		Iterator() : node_(nullptr) {};
+		Iterator(Node<T> * node) : node_(node) {};
+		Iterator(const Iterator & it) : node_(it.node_) {};
 
-    static Enumerable<T> fibonacci(int time);
-    static Enumerable<T> fibonacciUntil(T until);
+		//////////////////////////////////////////////////////////////////////////
+		// Movement Operator 
+		//////////////////////////////////////////////////////////////////////////
+		Iterator & operator++() { node_ = &node_->get_next(); return *this; };
+		Iterator operator++(int) { Iterator it = Iterator(node_); node_ = &node_->get_next(); return it; };
+		Iterator operator+(int n) const
+		{
+			Iterator it = Iterator(*this);
+			for (int i = 0; i < n; ++i)
+			{
+				++it;
+			}
+			return it;
+		};
+		friend Iterator operator+(int n, const Iterator & it) { return (it + n); }
+		
+		Iterator & operator--() { node_ = &node_->get_last(); return *this; };
+		Iterator operator--(int) { Iterator it = Iterator(node_); node_ = &node_->get_last(); return it; };
+		Iterator operator-(int n) const
+		{
+			Iterator it = &this;
+			for (int i = 0; i < n; ++i)
+			{
+				--it;
+			}
+			return it;
+		}
 
-    Iterator<T> & begin() {return *_begin;}
-    Iterator<T> * pBegin() {return _begin;}
-    Iterator<T> & end() {return *_end;}
-    Iterator<T> * pEnd() {return _end;}
+		T & operator*() { return node_->get_val(); }
+		const T & operator*() const { return node_->get_val(); }
 
-    void reset(T val = T()) { _begin = new Iterator<T>(val);_end = _begin->pNext(); _size = 1; _forward = true;}
-    Enumerable<T> & push(T val = T()) { _forward ? _end->add(val, false) : _begin->pLast()->add(val); return *this;}
-    T next() {return _forward ? *(*_curr++) : *(*_curr--);}
-    unsigned int size() {return _size;}
+		T * operator->() { return &node_->get_val(); }
+		const T * operator->() const { return &node_->get_val(); }
+		//////////////////////////////////////////////////////////////////////////
+		// Boolean Operator
+		//////////////////////////////////////////////////////////////////////////
+		bool operator==(const Iterator & it) const { return node_ == it.node_; }
+		bool operator!=(const Iterator & it) const { return !(*this == it); }
 
-    Enumerable<T> & map(std::function<T (T)> function);
-    template <class U> Enumerable<U> map(std::function<U(T)> function);
-    template <typename F> Enumerable<T> & select(F function);
-    template <typename F> void each(F function);
-    template <typename F> T inject(F function) const;
-    template <class U, typename F> U & inject(U & obj, F function) const;
-    T sum();
+		////////////////////////////////////////////////////////////////////////////////
+		// Check functions
+		////////////////////////////////////////////////////////////////////////////////
+	private:
+		void check_valid() const 
+		{
+			if (node_ == nullptr) throw std::logic_error("Iterator pointed to null value"); 
+		}
+	};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////	Class Enumerable								////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+public:
+	////////////////////////////////////////////////////////////////////////////////
+	// Constructor
+	////////////////////////////////////////////////////////////////////////////////
+	Enumerable() 
+	: begin_(new Node<T>()), end_(new Node<T>()), size_(0), sub_enum_start_index_(0) 
+	{ begin_->set_next(end_); }
+
+	Enumerable(const T * data, uint32_t size)
+	: begin_(new Node<T>()), end_(new Node<T>()), size_(size), sub_enum_start_index_(0)
+	{
+		begin_->set_next(end_);
+		for(uint32_t i = 0; i < size; ++i)
+		{
+			end_->set_last(data[i]);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Getters
+	//////////////////////////////////////////////////////////////////////////
+	const T & first() const
+	{
+		check_no_empty();
+		return begin_->get_next().get_val();
+	}
+
+	const T & last() const
+	{
+		check_no_empty();
+		return end_->get_last().get_val();
+	}
+
+	T & operator[](uint32_t n)
+	{
+		check_index(n);
+		Iterator<T> it = begin();
+		uint32_t i = 0;
+		while (i < n)
+		{
+			++it; ++i;
+		}
+		return *it;
+	}
+
+	Iterator<T> begin() const { return Iterator<T>(&begin_->get_next()); }
+
+	Iterator<T> end() const { return Iterator<T>(end_); }
+
+	uint32_t size() { return size_; }
+
+	Enumerable & get_sub(uint32_t start_index, uint32_t size)
+	{
+		check_index(start_index + size - 1);
+		// make sure it is initialized properly
+		if (sub_enum_.size() == 0 && size_ != 0)
+		{
+			sub_enum_.begin_ = begin_;
+			sub_enum_.size_ = 1;
+			sub_enum_.end = &begin_->next().next();
+		}
+		
+		// find the proper starting node
+		while (start_index < sub_enum_start_index_)
+		{
+			sub_enum_.begin_ = &begin_->last();
+			--sub_enum_start_index_;
+		}
+		while (start_index > sub_enum_start_index_)
+		{
+			sub_enum_.begin_ = &begin_->next();
+			++sub_enum_start_index_;
+		}
+
+		// adjust size and end_ node
+		sub_enum_.end_ = &sub_enum_.begin_.get_next();
+		for (uint32_t i = 0; i < size; ++i)
+		{
+			sub_enum_.end_ = &sub_enum_.end_->get_next();
+		}
+		sub_enum_.size_ = size;
+
+		return sub_enum_;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Adding Function
+	//////////////////////////////////////////////////////////////////////////
+	
+	// Add an element at the end of the Enumerable
+	Enumerable & push(const T & val)
+	{
+		end_->set_last(val);
+		++size_;
+		return *this;
+	}
+
+	// Add an element at the end of the Enumerable
+	Enumerable & operator<<(const T & val) { return push(val); }
+
+	// Add an element at the start of the Enumerable
+	Enumerable & shift(const T & val)
+	{
+		begin_->set_next(val);
+		++size_;
+		return *this;
+	}
+
+	// link both enumerable together
+	void operator+=(const Enumerable & en)
+	{
+		for (Iterator<T> it = en.begin(); it != en.end(); ++it)
+		{
+			push(*it);
+		}
+		size_ += en.size_;
+	}
+
+	// return an enumerable that is a link between both enumerable
+	Enumerable operator+(const Enumerable & en) const { Enumerable out = *this; out += en; return en; }
+
+	//////////////////////////////////////////////////////////////////////////
+	// Removing Function
+	//////////////////////////////////////////////////////////////////////////
+	T pop()
+	{
+		check_no_empty();
+		--size_;
+		return end_->remove_last();
+	}
+
+	void remove(uint32_t n)
+	{
+		check_index(n);
+		Node<T> * node = begin_;
+		for (uint32_t i = 0; i < n; ++i)
+		{
+			node = &node->get_next();
+		}
+		--size_;
+		return node->remove_next();
+	}
+
+	T unshift()
+	{
+		check_no_empty();
+		--size_;
+		return begin_->remove_next();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Group Manipulation
+	//////////////////////////////////////////////////////////////////////////
+	
+	//This function calls the function on each element of the enumerable and keeps only those wich return true
+	template <typename Function>
+	Enumerable & select_self(Function fct)
+	{
+		Node<T> * curr_node = begin_;
+		while (&curr_node->get_next() != end_)
+		{
+			if (!fct(curr_node->get_next().get_val()))
+			{
+				curr_node->remove_next();
+				--size_;
+				continue;
+			}
+			curr_node = &curr_node->get_next();
+		}
+		return *this;
+	}
+
+	template <typename Function>
+	Enumerable select(Function fct)
+	{
+		Enumerable en;
+		for (Iterator<T> it = begin(); it != end(); ++it)
+		{
+			if (fct(*it))
+			{
+				en << *it;
+			}
+		}
+		return en;
+	}
+
+	template <typename Function>
+	Enumerable & each(Function fct)
+	{
+		for (Iterator<T> it = begin(); it != end(); ++it)
+		{
+			fct(*it);
+		}
+		return *this;
+	}
+
+	template <class U, typename Function>
+	Enumerable<U> map(Function fct)
+	{
+		Enumerable<U> En;
+		for (Iterator<T> it = begin(); it != end(); ++it)
+		{
+			En.push(fct(*it));
+		}
+		return En;
+	}
+
+	template <class U, typename Function>
+	U inject(U starting_value, Function fct)
+	{
+		for (Iterator<T> it = begin(); it != end(); ++it)
+		{
+			starting_value = fct(starting_value, *it);
+		}
+		return starting_value;
+	}
+
+	T sum()
+	{
+		return inject(T(), [](const T & i, const T & j) {return i + j; });
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Informations
+	////////////////////////////////////////////////////////////////////////////////
+
+	friend std::ostream & operator<<(std::ostream & o, const Enumerable & en)
+	{
+		o << "{";
+		if (en.begin() != en.end())
+		{
+			for(Iterator<T> it = en.begin(); it + 1 != en.end(); ++it)
+			{
+				o << *it;
+				o << ", ";
+			}
+			o << *(--en.end());
+		}
+		o << "}";
+		return o;
+	}
+
+	// check if the value given id contain inside the array
+	bool contains(const T & val) const
+	{
+		for(Iterator<T> it = begin(); it != end(); ++it)
+		{
+			if (*it == val)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Check if there is a value in the array that match the given function condition
+	template <typename Function>
+	bool contains_condition(Function fct) const
+	{
+		for(Iterator<T> it = begin(); it != end(); ++it)
+		{
+			if (fct(*it))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
+private:
+	// check if the index given can be access
+	void check_index(uint32_t index) const
+	{
+		if (index + 1 > size_)
+		{
+			throw std::out_of_range("Index was out of range");
+		}
+	}
+
+	void check_no_empty() const
+	{
+		if (size_ == 0)
+		{
+			throw std::out_of_range("Array is empty");
+		}
+	}
+
+private:
+
+	Node<T> * begin_;
+	Node<T> * end_;
+	uint32_t size_;
+
+	Enumerable sub_enum_;
+	uint32_t sub_enum_start_index_;
 };
-
-template <class T>
-Enumerable<T>::Enumerable(const T & start, const T & end, const int & bounce) {
-    _begin = new Iterator<T>(start);
-    _end = _begin->pNext();
-    _size = 1;
-    _forward = true;
-    for (T i = start + bounce; i != end; i += bounce) {
-        _end->add(i, false);
-        _size++;
-    }
-    _curr = _begin;
-}
-
-template <class T>
-Enumerable<T>::Enumerable(const T * data, int size) {
-    _begin = new Iterator<T>(data[0]);
-    _end = _begin->pNext();
-    _size = 1;
-    _forward = true;
-    for (int i = 1; i < size; i++) {
-        _end->add(data[i], false);
-        _size++;
-    }
-}
-
-template <class T>
-Enumerable<T> Enumerable<T>::fibonacci(int time) {
-    Enumerable<T> en = Enumerable<T>();
-    en._begin = new Iterator<T>(T() + 1);
-    en._end = en._begin->pNext();
-    en._end->add((T() + 1), false);
-    en._size = 2;
-    for (int i = 1; i < time-1; i++) {
-        en._end->add(*(*(en._end)-1) + *(*(en._end)-2), false);
-        en._size++;
-    }
-    return en;
-}
-
-template <class T>
-Enumerable<T> Enumerable<T>::fibonacciUntil(T until) {
-    Enumerable<T> en = Enumerable<T>();
-    en._begin = new Iterator<T>(T() + 1);
-    en._end = en._begin->pNext();
-    en._end->add((T() + 1), false);
-    en._size = 2;
-    while (*(en._end->last())< until) {
-        en._end->add(*(*(en._end)-1) + *(*(en._end)-2), false);
-        en._size++;
-    }
-    return en;
-}
-
-template <class T>
-Enumerable<T> & Enumerable<T>::map(std::function<T(T)> fptr) {
-    for (auto it = _begin; it != _end; it =  it->pNext()) {
-        it->operate(fptr);
-    }
-    return *this;
-}
-
-template <class T>
-template <class U>
-Enumerable<U> Enumerable<T>::map(std::function<U(T)> fptr) {
-    Enumerable<U> en;
-    en.reset(fptr(*(*(_begin))));
-    for (Iterator<T> * it = _begin->pNext(); it != _end; it =  it->pNext()) {
-        en.push(fptr(*(*(it))));
-    }
-    return en;
-}
-
-template <class T>
-template <typename F>
-Enumerable<T> & Enumerable<T>::select(F fptr) {
-    Iterator<T> * it = _begin;
-    bool begining = true;
-    while (it != _end) {
-        if (!fptr(*(*it))) {
-            it = it->unlink();
-            _size--;
-            if (begining) {
-                _begin = it;
-            }
-        } else {
-            begining = false;
-            it = it->pNext();
-        };
-    }
-    return *this;
-}
-
-template <class T>
-template <typename F>
-T Enumerable<T>::inject(F fptr) const 
-{
-    Iterator<T> * it = _begin->pNext();
-    T sum = *(*_begin);
-    while (it != _end) {
-        sum = fptr(sum, *(*it));
-        it = it->pNext();
-    }
-    return sum;
-}
-
-template <class T>
-template <class U, typename F>
-U & Enumerable<T>::inject(U & obj, F fptr) const 
-{
-    Iterator<T> * it = _begin;
-    while (it != _end) {
-        fptr(obj, *(*(it)));
-        it = it->pNext();
-    }
-    return obj;
-}
-
-template <class T>
-T Enumerable<T>::sum() {
-    return this->inject([](const T & sum,const T & val){return sum + val;});
-}
-
-template <class T>
-template <typename F>
-void Enumerable<T>::each(F fptr) {
-    Iterator<T> * it = _begin;
-    while (it != _end) {
-        fptr(*(*it));
-        it = it->pNext();
-    }
-}
-
-#endif // !ENUMERABLE_H

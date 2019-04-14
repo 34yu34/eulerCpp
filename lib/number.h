@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iostream"
-#include "vector"
+#include "enumerable.h"
 #include "bignum.h"
 
 namespace Number
@@ -13,8 +13,8 @@ namespace Number
         int repetition;
     };
 
-    template <class T> std::vector<Factor<T> *> getFactors(T  num); 
-    template <class T> void addFactor(Factor<T> * fact,std::vector<Factor<T> *> & vect);
+    template <class T> Enumerable<Factor<T> *> getFactors(T  num); 
+    template <class T> void addFactor(Factor<T> * fact, Enumerable<Factor<T> *> & vect);
     template <class T> Factor<T> * findFactor(const T & factor, T & num);
     
     template <class T> bool isPalindrome(const T & num);
@@ -22,7 +22,7 @@ namespace Number
     template <class T> T min(const T & num1,const T & num2) {return num1 < num2 ? num1 : num2;}
     template <class T> void print(const T & val) {std::cout << val << std::endl;}
     template <class T> T pow(const T & val1,const T & val2) {T res = 1;for (T i = 0; i < val2; i++){ res *= val1;} return res;}
-} // Number
+}
 
 template <class T>
 bool Number::isPalindrome(const T & num) {
@@ -42,9 +42,9 @@ bool Number::isPalindrome(const T & num) {
 }
 
 template <class T>
-std::vector<Number::Factor<T> *> Number::getFactors(T num)
+Enumerable<Number::Factor<T> *> Number::getFactors(T num)
 {
-    std::vector<Number::Factor<T> *> solutions;
+    Enumerable<Number::Factor<T> *> solutions;
     addFactor(findFactor(T() + 2, num), solutions);
     addFactor(findFactor(T() + 3, num), solutions);
     addFactor(findFactor(T() + 5, num), solutions);
@@ -59,17 +59,17 @@ std::vector<Number::Factor<T> *> Number::getFactors(T num)
         Number::Factor<T> * fact = new Number::Factor<T>();
         fact->factor = num;
         fact->repetition = 1;
-        solutions.push_back(fact);
+        solutions << fact;
     }
     return solutions;
 }
 
 template<class T>
-void Number::addFactor(Number::Factor<T> * fact,std::vector<Number::Factor<T> *> & vect)
+void Number::addFactor(Number::Factor<T> * fact, Enumerable<Number::Factor<T> *> & vect)
 {
     if (fact != nullptr)
     {
-        vect.push_back(fact);
+        vect << fact;
     }
 }
 

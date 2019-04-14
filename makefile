@@ -1,6 +1,5 @@
 CFILE = $(wildcard lib/*.cpp)
 OFILE = $(CFILE:.cpp=.o)
-HFILE = $(CFILE:.cpp=.h)
 EULERFILE = $(wildcard euler*.cpp)
 EULEROUT = $(EULERFILE:.cpp=.out)
 INC = lib
@@ -24,7 +23,7 @@ $(LIBTRG): $(OFILE)
 	@ar $(ARFLAGS) $(LIBTRG) $^
 	@echo $(LIBTRG) created
 
-%.o:%.cpp $(HFILE)
+%.o:%.cpp
 	@$(CXX) $(CFLAGS) -c $< -o $@
 	@echo $@ created
 
