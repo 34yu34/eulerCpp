@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
         }
     }
     Enumerable<int> en = Enumerable<int>(data, index);
-    en.select(Number::isPalindrome<int>);
-    cout << en.inject(0, Number::max<int>) <<endl;
+    en.select(Number::is_palindrome<int>);
+    cout << en.inject(0, Number::max<int>) << endl;
     return 0;
 }

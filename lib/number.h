@@ -13,19 +13,20 @@ namespace Number
         int repetition;
     };
 
-    template <class T> Enumerable<Factor<T> *> getFactors(T  num); 
-    template <class T> void addFactor(Factor<T> * fact, Enumerable<Factor<T> *> & vect);
-    template <class T> Factor<T> * findFactor(const T & factor, T & num);
+    template <class T> Enumerable<Factor<T> *> get_factors(T  num); 
+    template <class T> void add_factor(Factor<T> * fact, Enumerable<Factor<T> *> & vect);
+    template <class T> Factor<T> * find_factor(const T & factor, T & num);
     
-    template <class T> bool isPalindrome(const T & num);
-    template <class T> T max(const T & num1,const T & num2) {return num1 > num2 ? num1 : num2;}
-    template <class T> T min(const T & num1,const T & num2) {return num1 < num2 ? num1 : num2;}
+    template <class T> bool is_palindrome(const T & num);
+    template <class T> T max(const T & num1, const T & num2) {return num1 > num2 ? num1 : num2;}
+    template <class T> T min(const T & num1, const T & num2) {return num1 < num2 ? num1 : num2;}
     template <class T> void print(const T & val) {std::cout << val << std::endl;}
-    template <class T> T pow(const T & val1,const T & val2) {T res = 1;for (T i = 0; i < val2; i++){ res *= val1;} return res;}
+    template <class T> T pow(const T & val1, const T & val2) {T res = 1;for (T i = 0; i < val2; i++){ res *= val1;} return res;}
 }
 
 template <class T>
-bool Number::isPalindrome(const T & num) {
+bool Number::is_palindrome(const T & num) 
+{
         unsigned int size = 0;
         int top = 1;
         int bot = 1;
@@ -42,17 +43,17 @@ bool Number::isPalindrome(const T & num) {
 }
 
 template <class T>
-Enumerable<Number::Factor<T> *> Number::getFactors(T num)
+Enumerable<Number::Factor<T> *> Number::get_factors(T num)
 {
     Enumerable<Number::Factor<T> *> solutions;
-    addFactor(findFactor(T() + 2, num), solutions);
-    addFactor(findFactor(T() + 3, num), solutions);
-    addFactor(findFactor(T() + 5, num), solutions);
-    addFactor(findFactor(T() + 7, num), solutions);
+    add_factor(find_factor(T() + 2, num), solutions);
+    add_factor(find_factor(T() + 3, num), solutions);
+    add_factor(find_factor(T() + 5, num), solutions);
+    add_factor(find_factor(T() + 7, num), solutions);
     for (T i = 12; i < num; i += 6)
     {
-        addFactor(findFactor(i + 1, num), solutions);
-        addFactor(findFactor(i - 1, num), solutions);
+        add_factor(find_factor(i + 1, num), solutions);
+        add_factor(find_factor(i - 1, num), solutions);
     }
     if (num != 1)
     {
@@ -65,7 +66,7 @@ Enumerable<Number::Factor<T> *> Number::getFactors(T num)
 }
 
 template<class T>
-void Number::addFactor(Number::Factor<T> * fact, Enumerable<Number::Factor<T> *> & vect)
+void Number::add_factor(Number::Factor<T> * fact, Enumerable<Number::Factor<T> *> & vect)
 {
     if (fact != nullptr)
     {
@@ -74,7 +75,7 @@ void Number::addFactor(Number::Factor<T> * fact, Enumerable<Number::Factor<T> *>
 }
 
 template <class T>
-Number::Factor<T> * Number::findFactor(const T & factor, T & num)
+Number::Factor<T> * Number::find_factor(const T & factor, T & num)
 {
     Number::Factor<T> * fact = new Number::Factor<T>();
     fact->factor = factor;

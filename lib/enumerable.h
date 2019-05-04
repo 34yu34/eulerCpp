@@ -214,12 +214,12 @@ public:
 	{ begin_->set_next(end_); }
 
 	Enumerable(const T * data, uint32_t size)
-	: begin_(new Node<T>()), end_(new Node<T>()), size_(size), sub_enum_start_index_(0)
+	: begin_(new Node<T>()), end_(new Node<T>()), size_(0), sub_enum_start_index_(0)
 	{
 		begin_->set_next(end_);
 		for(uint32_t i = 0; i < size; ++i)
 		{
-			end_->set_last(data[i]);
+			push(data[i]);
 		}
 	}
 
@@ -258,36 +258,38 @@ public:
 
 	Enumerable & get_sub(uint32_t start_index, uint32_t size)
 	{
+		sub_enum_ = new Enumerable<T>();
+		
 		check_index(start_index + size - 1);
 		// make sure it is initialized properly
-		if (sub_enum_.size() == 0 && size_ != 0)
+		if (sub_enum_->size() == 0 && size_ != 0)
 		{
-			sub_enum_.begin_ = begin_;
-			sub_enum_.size_ = 1;
-			sub_enum_.end = &begin_->next().next();
+			sub_enum_->begin_ = begin_;
+			sub_enum_->size_ = 1;
+			sub_enum_->end_ = &begin_->get_next().get_next();
 		}
-		
+
 		// find the proper starting node
 		while (start_index < sub_enum_start_index_)
 		{
-			sub_enum_.begin_ = &begin_->last();
+			sub_enum_->begin_ = &begin_->get_last();
 			--sub_enum_start_index_;
 		}
 		while (start_index > sub_enum_start_index_)
 		{
-			sub_enum_.begin_ = &begin_->next();
+			sub_enum_->begin_ = &begin_->get_next();
 			++sub_enum_start_index_;
 		}
 
 		// adjust size and end_ node
-		sub_enum_.end_ = &sub_enum_.begin_.get_next();
+		sub_enum_->end_ = &sub_enum_->begin_->get_next();
 		for (uint32_t i = 0; i < size; ++i)
 		{
-			sub_enum_.end_ = &sub_enum_.end_->get_next();
+			sub_enum_->end_ = &sub_enum_->end_->get_next();
 		}
-		sub_enum_.size_ = size;
+		sub_enum_->size_ = size;
 
-		return sub_enum_;
+		return *sub_enum_;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -500,6 +502,6 @@ private:
 	Node<T> * end_;
 	uint32_t size_;
 
-	Enumerable sub_enum_;
+	Enumerable<T> * sub_enum_;
 	uint32_t sub_enum_start_index_;
 };

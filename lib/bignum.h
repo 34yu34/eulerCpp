@@ -9,22 +9,22 @@ class Bignum
 {
 private:
   uint8_t * data;
-  uint32_t dataSize;
+  uint32_t data_size;
   bool neg;
 
   void init(const char * num);
   template<class T>
-  void initSize(T num);
+  void init_size(T num);
 
   bool operate(const Bignum & num, bool (* fptr)(int, int)) const;
-  int findSign(const Bignum & num) const;
+  int find_sign(const Bignum & num) const;
   uint32_t chop(const uint8_t d[], uint32_t currSize) const;
 
-  void additionStep(uint8_t * result, const Bignum & num1, const Bignum & num2, uint8_t & ret, uint32_t index) const;
-  void substractionStep(uint8_t * result, const Bignum * max, const Bignum * min, uint8_t & stole, uint32_t index) const;
+  void addition_step(uint8_t * result, const Bignum & num1, const Bignum & num2, uint8_t & ret, uint32_t index) const;
+  void substraction_step(uint8_t * result, const Bignum * max, const Bignum * min, uint8_t & stole, uint32_t index) const;
 
-  void initDivision(const Bignum & num, Bignum & quotient, Bignum & denominator, int & index) const;
-  void diviseStep(Bignum & reminder, Bignum & denominator, uint8_t * newData) const;
+  void init_division(const Bignum & num, Bignum & quotient, Bignum & denominator, int & index) const;
+  void divise_step(Bignum & reminder, Bignum & denominator, uint8_t * newData) const;
 
 public:
 

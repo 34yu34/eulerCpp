@@ -2,11 +2,10 @@
 #include <iostream>
 
 Enumerable_Generator::Enumerable_Generator()
-{
+{};
 
-};
 Enumerable_Generator::~Enumerable_Generator()
-{ };
+{};
 
 Enumerable_Generator & Enumerable_Generator::get()
 {
