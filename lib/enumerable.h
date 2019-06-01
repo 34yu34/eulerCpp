@@ -258,9 +258,18 @@ public:
 
 	Enumerable & get_sub(uint32_t start_index, uint32_t size)
 	{
-		sub_enum_ = new Enumerable<T>();
-		
+		if (sub_enum_ == nullptr) 
+		{
+			sub_enum_ = new Enumerable<T>();
+			sub_enum_start_index_ = 0;
+			sub_enum_->begin_ = begin_;
+			sub_enum_->size_ = 1;
+			sub_enum_->end_ = &begin_->get_next().get_next();
+			std::cout << "blah" << std::endl;
+		}
+	
 		check_index(start_index + size - 1);
+
 		// make sure it is initialized properly
 		if (sub_enum_->size() == 0 && size_ != 0)
 		{
@@ -272,12 +281,13 @@ public:
 		// find the proper starting node
 		while (start_index < sub_enum_start_index_)
 		{
-			sub_enum_->begin_ = &begin_->get_last();
+			sub_enum_->begin_ = &sub_enum_->begin_->get_last();
 			--sub_enum_start_index_;
 		}
+
 		while (start_index > sub_enum_start_index_)
 		{
-			sub_enum_->begin_ = &begin_->get_next();
+			sub_enum_->begin_ = &sub_enum_->begin_->get_next();
 			++sub_enum_start_index_;
 		}
 
@@ -502,6 +512,6 @@ private:
 	Node<T> * end_;
 	uint32_t size_;
 
-	Enumerable<T> * sub_enum_;
+	Enumerable<T> * sub_enum_ = nullptr;
 	uint32_t sub_enum_start_index_;
 };
