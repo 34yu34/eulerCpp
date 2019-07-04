@@ -13,8 +13,8 @@ int main(int argc, char const *argv[])
     int max = 0;
     for (int i = 0; i < 988; ++i)
     {
-        int mult = integer.get_sub(i, 14).inject(1, [](int val1, int val2){return val1 * val2;});
-        cout << integer.get_sub(i, 14) << " : " << mult << endl;
+        int mult = integer.get_sub(i, 13).inject(1, [](int val1, int val2){return val1 * val2;});
+        cout << integer.get_sub(i, 13) << " : " << mult << endl;
         max = Number::max(max, mult);
     }
     cout << max << endl;

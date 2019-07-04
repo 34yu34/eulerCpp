@@ -262,10 +262,6 @@ public:
 		{
 			sub_enum_ = new Enumerable<T>();
 			sub_enum_start_index_ = 0;
-			sub_enum_->begin_ = begin_;
-			sub_enum_->size_ = 1;
-			sub_enum_->end_ = &begin_->get_next().get_next();
-			std::cout << "blah" << std::endl;
 		}
 	
 		check_index(start_index + size - 1);
