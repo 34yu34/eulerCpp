@@ -83,7 +83,7 @@ private:
 
 		// next setters
 		Node & set_next(Node * node) { next_ = node; node->last_ = this; return *this; }
-		Node & set_next(const T & val) 
+		Node & set_next(const T & val)
 		{
 			Node * next = new Node(val);
 			Node * ancient_next = next_;
@@ -154,7 +154,7 @@ public:
 		Iterator(const Iterator & it) : node_(it.node_) {};
 
 		//////////////////////////////////////////////////////////////////////////
-		// Movement Operator 
+		// Movement Operator
 		//////////////////////////////////////////////////////////////////////////
 		Iterator & operator++() { node_ = &node_->get_next(); return *this; };
 		Iterator operator++(int) { Iterator it = Iterator(node_); node_ = &node_->get_next(); return it; };
@@ -168,7 +168,7 @@ public:
 			return it;
 		};
 		friend Iterator operator+(int n, const Iterator & it) { return (it + n); }
-		
+
 		Iterator & operator--() { node_ = &node_->get_last(); return *this; };
 		Iterator operator--(int) { Iterator it = Iterator(node_); node_ = &node_->get_last(); return it; };
 		Iterator operator-(int n) const
@@ -196,9 +196,9 @@ public:
 		// Check functions
 		////////////////////////////////////////////////////////////////////////////////
 	private:
-		void check_valid() const 
+		void check_valid() const
 		{
-			if (node_ == nullptr) throw std::logic_error("Iterator pointed to null value"); 
+			if (node_ == nullptr) throw std::logic_error("Iterator pointed to null value");
 		}
 	};
 
@@ -209,8 +209,8 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 	////////////////////////////////////////////////////////////////////////////////
-	Enumerable() 
-	: begin_(new Node<T>()), end_(new Node<T>()), size_(0), sub_enum_start_index_(0) 
+	Enumerable()
+	: begin_(new Node<T>()), end_(new Node<T>()), size_(0), sub_enum_start_index_(0)
 	{ begin_->set_next(end_); }
 
 	Enumerable(const T * data, uint32_t size)
@@ -258,12 +258,12 @@ public:
 
 	Enumerable & get_sub(uint32_t start_index, uint32_t size)
 	{
-		if (sub_enum_ == nullptr) 
+		if (sub_enum_ == nullptr)
 		{
 			sub_enum_ = new Enumerable<T>();
 			sub_enum_start_index_ = 0;
 		}
-	
+
 		check_index(start_index + size - 1);
 
 		// make sure it is initialized properly
@@ -301,7 +301,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Adding Function
 	//////////////////////////////////////////////////////////////////////////
-	
+
 	// Add an element at the end of the Enumerable
 	Enumerable & push(const T & val)
 	{
@@ -366,7 +366,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Group Manipulation
 	//////////////////////////////////////////////////////////////////////////
-	
+
 	//This function calls the function on each element of the enumerable and keeps only those wich return true
 	template <typename Function>
 	Enumerable & select_self(Function fct)
@@ -435,6 +435,18 @@ public:
 		return inject(T(), [](const T & i, const T & j) {return i + j; });
 	}
 
+	// returns an array containing all the value
+	T * to_array() const
+	{
+		T * arr = new T[size_];
+		uint32_t i = 0;
+		for(Iterator<T> it = begin(); it != end(); ++it)
+		{
+			arr[i++] = *it;
+		}
+		return arr;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Informations
 	////////////////////////////////////////////////////////////////////////////////
@@ -453,6 +465,12 @@ public:
 		}
 		o << "}";
 		return o;
+	}
+
+	// return true in a boolean operation if the enumerable is not empty
+	explicit operator bool() const
+	{
+		return size_ > 0;
 	}
 
 	// check if the value given id contain inside the array
