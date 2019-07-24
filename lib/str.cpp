@@ -1,6 +1,6 @@
-#include "sstring.h"
+#include "str.h"
 
-void Sstring::init(const char * data)
+void str::init(const char * data)
 {
   size_ = (uint32_t)strlen(data);
   data_ = new char[size_];
@@ -9,40 +9,40 @@ void Sstring::init(const char * data)
   }
 }
 
-Sstring::Sstring(const char * data)
+str::str(const char * data)
 {
   init(data);
 }
 
-Sstring::Sstring(const string & str)
+str::str(const string & str)
 {
   init(str.c_str());
 }
 
-Sstring::Sstring(const Sstring & str)
+str::str(const str & str)
 {
   init(str.data_);
 }
 
-Sstring & Sstring::operator=(const char * data)
+str & str::operator=(const char * data)
 {
   init(data);
   return *this;
 }
 
-Sstring & Sstring::operator=(const string & data)
+str & str::operator=(const string & data)
 {
   init(data.c_str());
   return *this;
 }
 
-Sstring & Sstring::operator=(const Sstring & data)
+str & str::operator=(const str & data)
 {
   init(data.data_);
   return *this;
 }
 
-Sstring::~Sstring()
+str::~str()
 {
   delete data_;
 }
