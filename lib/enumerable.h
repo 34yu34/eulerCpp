@@ -324,7 +324,7 @@ public:
     return Iterator<T>(end_);
   }
 
-  uint32_t size()
+  uint32_t size() const
   {
     return size_;
   }

@@ -1,11 +1,16 @@
 #include "str.h"
 
+str::str()
+{
+  string base = "";
+  init(base.c_str());
+}
+
 void str::init(const char * data)
 {
-  size_ = (uint32_t)strlen(data);
-  data_ = new char[size_];
-  for (uint32_t i = 0; i < size_; ++i) {
-    data_[i] = data[i];
+  data_ = Enumerable<char>();
+  for (uint32_t i = 0; data[i] != '\0'; ++i) {
+    data_ << data[i];
   }
 }
 
@@ -21,7 +26,7 @@ str::str(const string & str)
 
 str::str(const str & str)
 {
-  init(str.data_);
+  data_ = str.data_;
 }
 
 str & str::operator=(const char * data)
@@ -36,13 +41,53 @@ str & str::operator=(const string & data)
   return *this;
 }
 
-str & str::operator=(const str & data)
+str & str::operator=(const str & str)
 {
-  init(data.data_);
+  data_ = str.data_;
   return *this;
 }
 
 str::~str()
 {
-  delete data_;
+
+}
+////////////////////////////////////////////////////////////////////////////////
+// getters
+////////////////////////////////////////////////////////////////////////////////
+uint32_t str::size() const
+{
+  return data_.size(); 
+}
+
+char & str::operator[](const uint32_t i)
+{
+  return data_[i];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// operator
+////////////////////////////////////////////////////////////////////////////////
+
+str & str::operator+=(const str & text)
+{
+  for (str_it it = text.data_.begin(); it != text.data_.end(); ++it)
+  {
+    data_ << *it;
+  }
+  return *this;
+}
+
+str str::operator+(const str & text) const
+{
+  str result = *this;
+  return (result += text);
+}
+
+ostream & operator<<(ostream & o, const str & text)
+{
+  for (str_it it = text.data_.begin(); it != text.data_.end(); ++it)
+  {
+    o << *it;
+  }
+  return o;
 }
