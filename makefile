@@ -19,6 +19,8 @@ all: $(LIBTRG) $(EULEROUT)
 	@$(CXX) $(CFLAGS) -static $< -o $@ -L . -l $(LIBNAME)
 	@echo $@ created
 
+-include *.d */*.d
+
 $(LIBTRG): $(OFILE)
 	@ar $(ARFLAGS) $(LIBTRG) $^
 	@echo $(LIBTRG) created

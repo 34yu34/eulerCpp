@@ -17,28 +17,38 @@ Enumerable_Generator & Enumerable_Generator::get()
 
 Enumerable<int> Enumerable_Generator::prime(int max)
 {
-  static auto is_divisible = [] (int i)
-                             {
-                               return [i] (int j) {
-                                        return i % j == 0;
-                               };
-                             };
 
   Enumerable<int> En;
-  if (max < 2) {return En;}
-  En.push(2);
-  if (max < 3) {return En;}
-  En.push(3);
-  if (max < 5) {return En;}
-  En.push(5);
-  if (max < 7) {return En;}
-  En.push(7);
 
-  for (int i = 12; i - 1 <= max; i += 6) {
-    if (En.contains_condition(is_divisible(i - 1))) En << i - 1;
-    if (i + 1 > max) return En;
-    if (En.contains_condition(is_divisible(i + 1))) En << i + 1;
+  // setup
+  int * table = new int[max+1];
+  for (int i = 0; i < max+1; ++i)
+  {
+    table[i] = i;
   }
+
+  // removing the divising values
+  int jumper = 2;
+  while (jumper * jumper < max)
+  {
+    for (int i = jumper + jumper; i < max + 1; i += jumper) {
+      table[i] = 0;
+    }
+
+    do {
+      jumper += 1;
+    } while(table[jumper] == 0);
+  }
+
+  //put it in the enumerable
+  for (int i = 0; i < max+1; ++i)
+  {
+    if ( table[i] != 0 && table[i] != 1)
+    {
+      En << table[i];
+    }
+  }
+
   return En;
 }
 
