@@ -31,7 +31,7 @@ Enumerable<int> Enumerable_Generator::prime(int max)
   int jumper = 2;
   while (jumper * jumper < max)
   {
-    for (int i = jumper + jumper; i < max + 1; i += jumper) {
+    for (int i = jumper * jumper; i < max + 1; i += jumper) {
       table[i] = 0;
     }
 
