@@ -288,6 +288,18 @@ public:
     }
   }
 
+  Enumerable(std::initializer_list<T> list)
+  {
+    begin_ = new Node<T>();
+    end_ = new Node<T>();
+    size_ = 0;
+    sub_enum_start_index_ = 0;
+    begin_->set_next(end_);
+    for (auto it = list.begin(); it != list.end(); ++it) {
+      push(*it);
+    }
+  }
+
   //////////////////////////////////////////////////////////////////////////
   // Getters
   //////////////////////////////////////////////////////////////////////////
@@ -371,10 +383,16 @@ public:
   //////////////////////////////////////////////////////////////////////////
 
   // Add an element at the end of the Enumerable
-  Enumerable & push(const T & val)
+  template <class ... Ts>
+  Enumerable & push(const T & val, Ts ... vals)
   {
     end_->set_last(val);
     ++size_;
+    return push(vals...);
+  }
+
+  Enumerable & push()
+  {
     return *this;
   }
 
@@ -482,6 +500,17 @@ public:
     Enumerable<U> En;
     for (Iterator<T> it = begin(); it != end(); ++it) {
       En.push(fct(*it));
+    }
+    return En;
+  }
+
+  // this cast the enumerable in the type U, it has to be declared
+  template<class U>
+  Enumerable<U> cast()
+  {
+    Enumerable<U> En;
+    for (Iterator<T> it = begin(); it != end(); ++it) {
+      En.push((U)(*it));
     }
     return En;
   }

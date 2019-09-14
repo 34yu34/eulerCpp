@@ -10,6 +10,9 @@ using namespace std;
 
 int main(int argc, const char** argv) {
 
-    cout << Enumerable_Generator::get().prime(2000000).sum() << endl;
+    cout << Enumerable_Generator::get()
+            .prime(2000000)
+            .cast<uint64_t>()
+            .sum() << endl;
     return 0;
 }

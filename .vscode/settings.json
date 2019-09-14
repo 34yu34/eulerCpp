@@ -33,7 +33,8 @@
         "utility": "cpp",
         "cmath": "cpp",
         "new": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "atomic": "cpp"
     },
     "clang.cxxflags": ["-std=c++17"]
 }

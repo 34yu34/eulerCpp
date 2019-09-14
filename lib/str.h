@@ -3,19 +3,18 @@
 #include <stdint.h>
 #include <cstring>
 #include <iostream>
-#include "enumerable.h"
+#include "array.h"
 
 using namespace std;
-
-using str_it = Enumerable<char>::Iterator<char>; 
 
 class str
 {
 private:
-  Enumerable<char> data_;
+  Array<char> data_;
 
 private:
   void init(const char * data);
+  void copy_data(const str & str);
 
 public:
 // constructors
@@ -35,5 +34,9 @@ public:
 // operators
   str & operator+=(const str & str);
   str operator+(const str & str) const;
+  str & operator-=(const str & str);
+  str & operator-=(const string & str);
+  str & operator-=(const char & c);
+  str operator-(str str) const;
   friend ostream & operator<<(ostream & o,const str & text); 
 };

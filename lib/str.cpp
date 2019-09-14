@@ -8,9 +8,19 @@ str::str()
 
 void str::init(const char * data)
 {
-  data_ = Enumerable<char>();
-  for (uint32_t i = 0; data[i] != '\0'; ++i) {
+  data_.empty();
+  uint32_t len = strlen(data);
+  for (uint32_t i = 0; i < len; ++i) {
     data_ << data[i];
+  }
+}
+
+void str::copy_data(const str & line)
+{
+  data_.empty();
+  for (uint32_t i = 0; i < line.data_.size(); ++i)
+  {
+    data_ << line.data_[i];
   }
 }
 
@@ -26,7 +36,7 @@ str::str(const string & str)
 
 str::str(const str & str)
 {
-  data_ = str.data_;
+  copy_data(str);
 }
 
 str & str::operator=(const char * data)
@@ -43,7 +53,7 @@ str & str::operator=(const string & data)
 
 str & str::operator=(const str & str)
 {
-  data_ = str.data_;
+  copy_data(str);
   return *this;
 }
 
@@ -70,9 +80,9 @@ char & str::operator[](const uint32_t i)
 
 str & str::operator+=(const str & text)
 {
-  for (str_it it = text.data_.begin(); it != text.data_.end(); ++it)
+  for (uint32_t i = 0; i < text.data_.size(); ++i)
   {
-    data_ << *it;
+    data_ << text.data_[i];
   }
   return *this;
 }
@@ -83,11 +93,34 @@ str str::operator+(const str & text) const
   return (result += text);
 }
 
-ostream & operator<<(ostream & o, const str & text)
+str & str::operator-=(const str & str)
 {
-  for (str_it it = text.data_.begin(); it != text.data_.end(); ++it)
+  return *this;
+}
+
+str & str::operator-=(const string & str)
+{
+  return *this;
+}
+
+
+str & str::operator-=(const char & c)
+{
+  return *this;
+}
+
+
+str str::operator-(str str) const
+{
+  return *this;
+}
+
+
+ostream & operator<<(ostream & o,const str & text)
+{
+  for (uint32_t i = 0; i < text.data_.size(); ++i)
   {
-    o << *it;
+    o << text.data_[i];
   }
   return o;
 }

@@ -5,9 +5,11 @@ using namespace std;
 
 int main(int argc, const char** argv) {
 
+    string blah = "vvvv";
     str text = "blah";
-    char * blah = "blah";
-    str text2 = blah;
-    cout << text << " " << text2 << endl;
+    str text2 = "vvvv";
+    cout << "blah" << endl;
+    cout << text2 << endl;
+    cout << text << ", " << text2 << ", " << text[0] << endl;
     return 0;
 }

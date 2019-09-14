@@ -2,6 +2,7 @@
 
 #include "iostream"
 #include "enumerable.h"
+#include "array.h"
 #include "bignum.h"
 
 namespace Number
@@ -25,6 +26,12 @@ namespace Number
   bool is_palindrome(const T & num);
 
   template<class T>
+  bool is_prime(const T & num);
+
+  template<class T>
+  Enumerable<T> get_diviser(const T & num);
+
+  template <class T>
   T max(const T & num1, const T & num2)
   {
     return num1 > num2 ? num1 : num2;
@@ -62,7 +69,7 @@ bool Number::is_palindrome(const T & num)
     size += 1;top *= 10;
   }
   top /= 10;
-  for (unsigned int i = 0; i < size / 2; i++) {
+  for (uint64_t i = 0; i < size / 2; i++) {
     if ((num / top) % 10 != ((num / bot) % 10)) {
       return false;
     }
@@ -71,6 +78,25 @@ bool Number::is_palindrome(const T & num)
   }
   return true;
 }
+
+template<class T>
+bool Number::is_prime(const T & num)
+{
+  if (num % 2 == 0) return false;
+  if (num % 3 == 0) return false;
+  if (num % 5 == 0) return false;
+  if (num % 7 == 0) return false;
+
+  for (uint64_t i = 12; (i-1) * (i-1) <= num; i += 6)
+  {
+    if (num % (i - 1) == 0 || num % (i + 1) == 0)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
 
 template<class T>
 Enumerable<Number::Factor<T> *> Number::get_factors(T num)
@@ -115,4 +141,19 @@ Number::Factor<T> * Number::find_factor(const T & factor, T & num)
     return nullptr;
   }
   return fact;
+}
+
+template<class T>
+Enumerable<T> Number::get_diviser(const T & num)
+{
+  Enumerable<T> result;
+  result << 1 << num;
+  for(T i = 2; i * i < num; ++i)
+  {
+    if (num % i == 0)
+    {
+      result << i << num / i;
+    }
+  }
+  return result;
 }

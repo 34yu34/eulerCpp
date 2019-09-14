@@ -113,7 +113,7 @@ void Bignum::init_size(T num)
 
 Bignum::~Bignum()
 {
-  delete[] data;
+  delete data;
 }
 
 /*********************************************************************
