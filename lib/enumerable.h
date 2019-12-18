@@ -288,6 +288,16 @@ public:
     }
   }
 
+  Enumerable(const Enumerable<T> & en)
+    : begin_(new Node<T>()), end_(new Node<T>()), size_(0), sub_enum_start_index_(0)
+  {
+    begin_->set_next(end_);
+    for(auto it = en.begin(); it != en.end(); ++it)
+    {
+      push(*it);
+    }
+  }
+
   Enumerable(std::initializer_list<T> list)
   {
     begin_ = new Node<T>();

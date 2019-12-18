@@ -9,6 +9,8 @@ int main(int argc, char const *argv[])
     Array<int> c;
     Array<int> d = {1, 2, 6, 7};
 
+    Array<int> g(10000000, 43234);
+
     c.push(2,3,4,5,6,7,8);
     a << 4 << 5 << 6 << 7;
 
@@ -21,6 +23,7 @@ int main(int argc, char const *argv[])
 
     cout << a.select([](int b){return (b % 2 == 0);}) << endl;
 
+    cout << g[5672839] << endl;
     if (a)
     {
         cout << "blah" << endl;

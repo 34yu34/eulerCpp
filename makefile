@@ -1,10 +1,14 @@
 CFILE = $(wildcard lib/*.cpp)
+TESTFILE = $(wildcard tests/test*.h)
 OFILE = $(CFILE:.cpp=.o)
 EULERFILE = $(wildcard euler*.cpp)
 EULEROUT = $(EULERFILE:.cpp=.out)
+TESTCOMPILER = $(wildcard test*.cpp)
+TESTOUT = $(TESTCOMPILER:.cpp=.out)
 INC = lib
+TESTFOLDER = tests
 
-CFLAGS = -I $(INC) -MMD -Wall -lm -g -O
+CFLAGS = -I $(INC) -I $(TESTFOLDER) -MMD -Wall -lm -g -O
 ARFLAGS = rcs
 
 CXX = g++
@@ -13,7 +17,10 @@ LIBNAME = euler
 LIBTRG = lib$(LIBNAME).a
 
 
-all: $(LIBTRG) $(EULEROUT) 
+all: $(LIBTRG) $(EULEROUT)
+
+test:  $(LIBTRG) $(TESTOUT)
+	@./$(TESTOUT)
 
 %.out:%.cpp
 	@$(CXX) $(CFLAGS) -static $< -o $@ -L . -l $(LIBNAME)
@@ -30,4 +37,4 @@ $(LIBTRG): $(OFILE)
 -include *.d */*.d
 
 clean:
-	@rm *.out *.a **/*.o **/*.d *.d
+	@rm *.out *.a *.o **/*.o **/*.d *.d

@@ -34,7 +34,8 @@
         "cmath": "cpp",
         "new": "cpp",
         "string_view": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "random": "cpp"
     },
     "clang.cxxflags": ["-std=c++17"]
 }
