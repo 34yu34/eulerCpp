@@ -4,15 +4,19 @@
 #include <string.h>
 
 #define ASSERT(a, b) \
-std::cout << #a << " compared to " << #b << " " << std::endl; \
 assert(a, b);
 
-#define ASSERT_ARRAY(a, b, c) \
-assert(a, b, c);
+#define ASSERT_FAIL(a) \
+assert_fail(a);
 
-#define LOG_EXEC(a) \
-std::cout << #a << std::endl;\
-a;
+#define ASSERT_ARRAY(a, b, size) \
+assert(a, b, size);
+
+#define DESCRIBE(a) \
+section(a);
+
+#define IT(a) \
+comment(a);
 
 class test
 {
@@ -32,7 +36,7 @@ protected:
 
     template <class T> void assert(const T & e1,const T & e2);
     template <class T> void assert(const T e1[],const T e2[], uint64_t size);
-
+    template <class Function> void assert_fail(Function f);
     void end();
     void run();
 
@@ -87,7 +91,7 @@ void test::end()
     }
     else
     {
-        std::cout << "All cases were successful!" << std::endl;
+        std::cout << "All cases were successful!\n" << std::endl;
     }
 }
 
@@ -173,7 +177,23 @@ void test::assert(const T e1[], const T e2[], uint64_t size)
         fail();
         std::cout << e.what() << '\n';
     }
+}
 
+template <class Function>
+void test::assert_fail(Function f)
+{
+    try
+    {
+        f();
+        fail();
+        std::cout << "test didn't throw errors" << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        success();
+        std::cout << "an execption was thrown" << '\n';
+    }
+    
 }
 
 template <class T>

@@ -30,7 +30,7 @@ public:
         data_ = new T[allocated_size];
     }
 
-    Array(uint64_t allocated_size,const T & default_value)
+    Array(uint64_t allocated_size, const T & default_value)
     : size_(allocated_size), max_size_(allocated_size)
     {
         data_ = new T[allocated_size];
@@ -60,6 +60,19 @@ public:
         {
             data_[i] = arr.data_[i];
         } 
+    }
+
+    Array & operator=(const Array & arr)
+    {
+        size_ = arr.size_;
+        max_size_ = arr.max_size_;
+        delete[] data_;
+        data_ = new T[max_size_];
+        for (uint64_t i = 0; i < arr.size_; ++i)
+        {
+            data_[i] = arr.data_[i];
+        }
+        return *this;
     }
 
     Array(std::initializer_list<T> list)
@@ -170,10 +183,8 @@ public:
 
     /* 
      * Changes the type of the array to another type
-     * used like this :
-     *  cast<U>() cast an array into U type
     */ 
-    template <class U, class Function>
+    template <class U>
     Array<U> cast() const
     {
         Array<U> new_data;
@@ -212,7 +223,7 @@ public:
     U inject(U start_val, Function f) const
     {
         U adder = start_val;
-        for (uint64_t i = 1; i < size_; i++)
+        for (uint64_t i = 0; i < size_; i++)
         {
             adder = f(adder, data_[i]);
         }
