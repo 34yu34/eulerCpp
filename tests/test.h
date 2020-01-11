@@ -66,13 +66,13 @@ void test::section(std::string desc /*= ""*/)
         is_first_ = false;
     }
     setup();
-    std::cout << "\n----------TESTS " << test_count_++ << "----------\n" << std::endl;
-    std::cout << desc << std::endl << std::endl;
+    std::cout << "\n----------TESTS " << test_count_++ << "----------" << std::endl;
+    std::cout << desc << std::endl;
 }
 
 void test::comment(std::string desc)
 {
-    std::cout << desc << std::endl;
+    std::cout << std::endl << desc << std::endl;
 }
 
 void test::run()
