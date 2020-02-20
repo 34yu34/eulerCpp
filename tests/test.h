@@ -4,19 +4,19 @@
 #include <string.h>
 
 #define ASSERT(a, b) \
-assert(a, b);
+    assert(a, b);
 
 #define ASSERT_FAIL(a) \
-assert_fail(a);
+    assert_fail(a);
 
 #define ASSERT_ARRAY(a, b, size) \
-assert(a, b, size);
+    assert(a, b, size);
 
 #define DESCRIBE(a) \
-section(a);
+    section(a);
 
 #define IT(a) \
-comment(a);
+    comment(a);
 
 class test
 {
@@ -34,29 +34,31 @@ protected:
     void section(std::string desc = "");
     void comment(std::string desc);
 
-    template <class T> void assert(const T & e1,const T & e2);
-    template <class T> void assert(const T e1[],const T e2[], uint64_t size);
-    template <class Function> void assert_fail(Function f);
+    template <class T>
+    void assert(const T &e1, const T &e2);
+    template <class T>
+    void assert(const T e1[], const T e2[], uint64_t size);
+    template <class Function>
+    void assert_fail(Function f);
     void end();
     void run();
 
 public:
     test();
 
-private:  
+private:
     void case_text();
     void success();
     void fail();
 
-    template <class T> void print_array(uint64_t size, T e1[]);
+    template <class T>
+    void print_array(uint64_t size, T e1[]);
+
 public:
-
-
 };
 
 test::test()
-: count_(1), errors_(0), test_count_(1), is_first_(true) {}
-
+    : count_(1), errors_(0), test_count_(1), is_first_(true) {}
 
 void test::section(std::string desc /*= ""*/)
 {
@@ -72,7 +74,8 @@ void test::section(std::string desc /*= ""*/)
 
 void test::comment(std::string desc)
 {
-    std::cout << std::endl << desc << std::endl;
+    std::cout << std::endl
+              << desc << std::endl;
 }
 
 void test::run()
@@ -87,11 +90,12 @@ void test::end()
     std::cout << "\n---------- END ----------\n";
     if (errors_)
     {
-        std::cout << "There was a total of " << errors_ << " error(s) on " << count_ << " cases"<< std::endl;
+        std::cout << "There was a total of " << errors_ << " error(s) on " << count_ << " cases" << std::endl;
     }
     else
     {
-        std::cout << "All cases were successful!\n" << std::endl;
+        std::cout << "All cases were successful!\n"
+                  << std::endl;
     }
 }
 
@@ -113,15 +117,15 @@ void test::fail()
     std::cout << " failed : ";
 }
 
-template<class T>
-void test::assert(const T & e1, const T & e2)
+template <class T>
+void test::assert(const T &e1, const T &e2)
 {
     try
     {
         if (e1 != e2)
         {
             fail();
-            std::cout <<  "expected " << e1 << " to be " << e2 << std::endl;
+            std::cout << "expected " << e1 << " to be " << e2 << std::endl;
         }
         else
         {
@@ -129,7 +133,7 @@ void test::assert(const T & e1, const T & e2)
             std::cout << "asserted " << e1 << ", " << e2 << std::endl;
         }
     }
-    catch (const std::exception& e)
+    catch (const std::exception &e)
     {
         fail();
         std::cout << e.what() << std::endl;
@@ -143,9 +147,11 @@ void test::assert(const T e1[], const T e2[], uint64_t size)
     {
         // these values are just used to test if it is accessible
         // we dont want the warning there
-        if (e1[size-1] == e2[size-1]) {};
+        if (e1[size - 1] == e2[size - 1])
+        {
+        };
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         fail();
         std::cout << "Arrays are not of size " << size << std::endl;
@@ -156,7 +162,7 @@ void test::assert(const T e1[], const T e2[], uint64_t size)
         bool are_equal = true;
         for (uint64_t i = 0; i < size; i++)
         {
-            if(e1[i] != e2[i])
+            if (e1[i] != e2[i])
             {
                 are_equal = false;
                 fail();
@@ -172,7 +178,7 @@ void test::assert(const T e1[], const T e2[], uint64_t size)
             std::cout << "Arrays match." << std::endl;
         }
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         fail();
         std::cout << e.what() << '\n';
@@ -188,21 +194,20 @@ void test::assert_fail(Function f)
         fail();
         std::cout << "test didn't throw errors" << std::endl;
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         success();
         std::cout << "an execption was thrown" << '\n';
     }
-    
 }
 
 template <class T>
 void test::print_array(uint64_t size, T e1[])
 {
     std::cout << "    {";
-    for (uint64_t i = 0; i < size-1; i++)
+    for (uint64_t i = 0; i < size - 1; i++)
     {
-        std:: cout << e1[i] << ", " ;
+        std::cout << e1[i] << ", ";
     }
-    std::cout << e1[size-1] << "}\n";
+    std::cout << e1[size - 1] << "}\n";
 }

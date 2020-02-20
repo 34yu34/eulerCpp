@@ -9,29 +9,31 @@ template <class T>
 class Array
 {
 private:
-    T * data_;
+    T *data_;
     uint64_t size_;
     uint64_t max_size_;
+
 public:
-    static const uint64_t BASIC_SIZE = 20; 
+    static const uint64_t BASIC_SIZE = 20;
+
 public:
-////////////////////////////////////////////////////////////////////////////////
-// Constructor
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // Constructor
+    ////////////////////////////////////////////////////////////////////////////////
     Array()
-    : size_(0), max_size_(BASIC_SIZE)
+        : size_(0), max_size_(BASIC_SIZE)
     {
         data_ = new T[BASIC_SIZE];
     }
 
     Array(uint64_t allocated_size)
-    : size_(0), max_size_(allocated_size)
+        : size_(0), max_size_(allocated_size)
     {
         data_ = new T[allocated_size];
     }
 
-    Array(uint64_t allocated_size, const T & default_value)
-    : size_(allocated_size), max_size_(allocated_size)
+    Array(uint64_t allocated_size, const T &default_value)
+        : size_(allocated_size), max_size_(allocated_size)
     {
         data_ = new T[allocated_size];
         for (uint64_t i = 0; i < allocated_size; ++i)
@@ -40,10 +42,10 @@ public:
         }
     }
 
-    Array(uint64_t size, T * data)
-    : size_(size), max_size_(size)
+    Array(uint64_t size, T *data)
+        : size_(size), max_size_(size)
     {
-        data_ = new T [size];
+        data_ = new T[size];
         max_size_ = size;
         size = size;
         for (uint64_t i = 0; i < size; ++i)
@@ -52,17 +54,17 @@ public:
         }
     }
 
-    Array(const Array & arr)
-    : size_(arr.size_), max_size_(arr.max_size_) 
+    Array(const Array &arr)
+        : size_(arr.size_), max_size_(arr.max_size_)
     {
         data_ = new T[arr.max_size_];
         for (uint64_t i = 0; i < arr.size_; ++i)
         {
             data_[i] = arr.data_[i];
-        } 
+        }
     }
 
-    Array & operator=(const Array & arr)
+    Array &operator=(const Array &arr)
     {
         size_ = arr.size_;
         max_size_ = arr.max_size_;
@@ -76,10 +78,11 @@ public:
     }
 
     Array(std::initializer_list<T> list)
-    : size_(0), max_size_(BASIC_SIZE)
+        : size_(0), max_size_(BASIC_SIZE)
     {
         data_ = new T[max_size_];
-        for (T item : list) {
+        for (T item : list)
+        {
             push(item);
         }
     }
@@ -88,16 +91,16 @@ public:
     {
         delete[] data_;
     }
-////////////////////////////////////////////////////////////////////////////////
-// Getters
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////////////////////////////
 
     uint64_t size() const
     {
         return size_;
     }
 
-    T & operator[](uint64_t index)
+    T &operator[](uint64_t index)
     {
         check_index(index);
         return data_[index];
@@ -119,9 +122,9 @@ public:
     /*
      * copy all the data in the pointer;
     */
-    T * data()
+    T *data()
     {
-        T * data = new T[size_];
+        T *data = new T[size_];
         for (uint64_t i = 0; i < size_; ++i)
         {
             data[i] = data_[i];
@@ -129,29 +132,29 @@ public:
         return data;
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// Adders
-////////////////////////////////////////////////////////////////////////////////
-    
+    ////////////////////////////////////////////////////////////////////////////////
+    // Adders
+    ////////////////////////////////////////////////////////////////////////////////
+
     template <typename... Ts>
-    Array & push(const T & val, Ts ... other_vals)
+    Array &push(const T &val, Ts... other_vals)
     {
         check_addable();
         data_[size_++] = T(val);
-        return push(other_vals...); 
+        return push(other_vals...);
     }
 
-    Array & push()
+    Array &push()
     {
         return *this;
     }
 
-    Array & operator<<(T val)
+    Array &operator<<(T val)
     {
         return push(val);
     }
 
-    Array & operator+=(const Array & arr)
+    Array &operator+=(const Array &arr)
     {
         check_addable(arr.size_);
         for (uint64_t i = 0; i < arr.size_; ++i)
@@ -166,9 +169,9 @@ public:
         return (arr += *this);
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// manipulator
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // manipulator
+    ////////////////////////////////////////////////////////////////////////////////
 
     template <class U, class Function>
     Array<U> map(Function f) const
@@ -183,7 +186,7 @@ public:
 
     /* 
      * Changes the type of the array to another type
-    */ 
+    */
     template <class U>
     Array<U> cast() const
     {
@@ -203,14 +206,14 @@ public:
         {
             if (f(data_[i]))
             {
-                new_data << data_[i]; 
+                new_data << data_[i];
             }
         }
         return new_data;
     }
 
     template <class Function>
-    Array<T> & each(Function f)
+    Array<T> &each(Function f)
     {
         for (uint64_t i = 0; i < size_; i++)
         {
@@ -232,7 +235,7 @@ public:
 
     T sum()
     {
-        return inject(T(), [](T a, T b){return a + b;});
+        return inject(T(), [](T a, T b) { return a + b; });
     }
 
     void empty()
@@ -243,19 +246,21 @@ public:
         max_size_ = BASIC_SIZE;
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// informations
-////////////////////////////////////////////////////////////////////////////////
-    
-    friend std ::ostream & operator<<(std::ostream & o, const Array & en)
+    ////////////////////////////////////////////////////////////////////////////////
+    // informations
+    ////////////////////////////////////////////////////////////////////////////////
+
+    friend std ::ostream &operator<<(std::ostream &o, const Array &en)
     {
         o << "[";
-        if (en.size_ > 0) {
-            for (uint64_t i = 0; i < en.size_-1; ++i) {
+        if (en.size_ > 0)
+        {
+            for (uint64_t i = 0; i < en.size_ - 1; ++i)
+            {
                 o << en.data_[i];
                 o << ", ";
             }
-            o << en.data_[en.size_-1];
+            o << en.data_[en.size_ - 1];
         }
         o << "]";
         return o;
@@ -268,7 +273,7 @@ public:
     }
 
     template <class Function>
-    bool contains(const T & val)
+    bool contains(const T &val)
     {
         for (uint64_t i = 0; i < size_; ++i)
         {
@@ -280,13 +285,10 @@ public:
         return false;
     }
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// check function
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // check function
+    ////////////////////////////////////////////////////////////////////////////////
 private:
-
     void check_index(uint64_t index = 0) const
     {
         if (index >= size_)
@@ -307,9 +309,9 @@ private:
     {
         check_not_max(amount);
         amount = amount < size_ ? size_ : amount; // make sure that the amount is at least doubled
-        uint64_t new_size = max_size_ + amount < max_size_ ? UINT32_MAX : max_size_ + amount;        
+        uint64_t new_size = max_size_ + amount < max_size_ ? UINT32_MAX : max_size_ + amount;
 
-        T * new_data = new T[new_size];
+        T *new_data = new T[new_size];
         max_size_ = new_size;
         for (uint64_t i = 0; i < size_; ++i)
         {
