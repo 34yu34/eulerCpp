@@ -1,6 +1,6 @@
-CFILE = $(wildcard lib/*.cpp)
+CLIBFILE = $(wildcard lib/*.cpp)
 TESTFILE = $(wildcard tests/test*.h)
-OFILE = $(CFILE:.cpp=.o)
+OLIBFILE = $(CLIBFILE:.cpp=.o)
 EULERFILE = $(wildcard euler*.cpp)
 EULEROUT = $(EULERFILE:.cpp=.out)
 TESTCOMPILER = $(wildcard test*.cpp)
@@ -22,13 +22,13 @@ all: $(LIBTRG) $(EULEROUT)
 test:  $(LIBTRG) $(TESTOUT)
 	@./$(TESTOUT)
 
+$(LIBTRG): $(OLIBFILE)
+	@ar $(ARFLAGS) $(LIBTRG) $^
+	@echo $(LIBTRG) created
+
 %.out:%.cpp
 	@$(CXX) $(CFLAGS) -static $< -o $@ -L . -l $(LIBNAME)
 	@echo $@ created
-
-$(LIBTRG): $(OFILE)
-	@ar $(ARFLAGS) $(LIBTRG) $^
-	@echo $(LIBTRG) created
 
 %.o:%.cpp
 	@$(CXX) $(CFLAGS) -c $< -o $@

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <stdint.h>
+#include <cstdint>
 #include <exception>
 #include <initializer_list>
 
@@ -122,7 +122,7 @@ public:
     /*
      * copy all the data in the pointer;
     */
-    T *data()
+    T *data() const
     {
         T *data = new T[size_];
         for (uint64_t i = 0; i < size_; ++i)
@@ -130,6 +130,16 @@ public:
             data[i] = data_[i];
         }
         return data;
+    }
+
+    T * begin()
+    {
+        return data_;
+    }
+
+    T * end()
+    {
+        return data_ + size_ ;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +194,7 @@ public:
         return new_data;
     }
 
-    /* 
+    /*
      * Changes the type of the array to another type
     */
     template <class U>

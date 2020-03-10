@@ -100,6 +100,16 @@ public:
 
         IT("Should return the biggest element of the array from an inject")
         ASSERT(arr1.inject(arr1[0], [](int result, int next) { return result > next ? result : next; }), 4)
+
+        DESCRIBE("Test the for loop")
+        IT("should let range based for loop be executed")
+        arr1 = {1,2,3,4,5};
+        int data8[] = {5,5,5,5,5};
+        for(int & val : arr1)
+        {
+            val = 5;
+        }
+        ASSERT_ARRAY(arr1.data(), data8, 5);
     }
 
     // execution
