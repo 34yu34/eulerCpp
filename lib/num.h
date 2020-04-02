@@ -13,12 +13,18 @@ private:
     static const uint64_t BASE = 10000000000000000000U;
     static const uint32_t BASE_LENGTH = 19; // 10^19 gives BASE
 
+    void initialize_string(std::string n);
+    void initialize_int(const int & n);
+    void initialize_num(const num & n);
+
 public:
     num();
-    num(const num & n);
+    num(const num &n);
+    num(const int &i);
+    num(const std::string &n);
     ~num();
 
-    num & operator=(const std::string & n);
+    num & operator=(const std::string &n);
     num & operator=(const int & n);
     num & operator=(const num & n);
 
