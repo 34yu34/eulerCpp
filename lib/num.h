@@ -1,6 +1,7 @@
 #include <cstdint>
 #include "array.h"
 #include <cmath>
+#include <iostream>
 
 typedef unsigned __int128 uint128_t;
 
@@ -30,7 +31,10 @@ public:
 
     num & operator+=(const num & n);
     num & operator+=(const int & n);
+    num operator+(const num & n) const;
+    num operator+(const int & n) const;
+    friend num operator+(const int & n1, num n2);
 
-    std::string to_s();
-
+    std::string to_s() const;
+    friend std::ostream &operator<<(std::ostream &o, const num &n);
 };

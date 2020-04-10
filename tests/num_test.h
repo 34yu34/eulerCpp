@@ -45,6 +45,9 @@ public:
         num2 = "1999999999999999999999999999";
         num1 += num2;
         ASSERT(num1.to_s(), result);
+
+        num num3 = num1 + num2;
+        assert(num3.to_s(), result);
     }
 
        // execution

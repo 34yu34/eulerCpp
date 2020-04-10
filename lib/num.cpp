@@ -116,7 +116,24 @@ num &num::operator+=(const int &i)
   return this->operator+=(n);
 }
 
-std::string num::to_s()
+num num::operator+(const num & n) const
+{
+  num a = *this;
+  return a += n; 
+}
+
+num num::operator+(const int &n) const
+{
+  num a = *this;
+  return a += n;
+}
+
+num operator+(const int &n1, num n2)
+{
+  return n2 += n1;
+}
+
+std::string num::to_s() const
 {
 
   std::string front = _neg ? "-" : "";
@@ -134,4 +151,10 @@ std::string num::to_s()
     rep = str_val + rep;
   }
   return front + rep;
+}
+
+std::ostream &operator<<(std::ostream &o, const num &n)
+{
+  o << n.to_s();
+  return o;
 }
