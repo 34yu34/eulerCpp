@@ -34,6 +34,8 @@ public:
     num operator+(const num & n) const;
     num operator+(const int & n) const;
     friend num operator+(const int & n1, num n2);
+    num & operator++();
+    num operator++(int);
 
     std::string to_s() const;
     friend std::ostream &operator<<(std::ostream &o, const num &n);

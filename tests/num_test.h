@@ -43,11 +43,18 @@ public:
         std::string result = "3999999999999999999999999998";
         num1 = "1999999999999999999999999999";
         num2 = "1999999999999999999999999999";
-        num1 += num2;
-        ASSERT(num1.to_s(), result);
-
         num num3 = num1 + num2;
-        assert(num3.to_s(), result);
+        ASSERT(num3.to_s(), result);
+
+        num1 += num2;
+        assert(num1.to_s(), result);
+        num1 = "1999999999999999999999999999";
+        result = "2000000000000000000000000000";
+        ASSERT((++num1).to_s(), result);
+        num1 = "1999999999999999999999999999";
+        std::string result2 = "1999999999999999999999999999";
+        ASSERT((num1++).to_s(), result2)
+        ASSERT(num1.to_s(), result)
     }
 
        // execution

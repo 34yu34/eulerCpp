@@ -96,12 +96,12 @@ num &num::operator+=(const num &n)
       _data[i] = (uint64_t)((add + rem) % (uint128_t)BASE);
       rem = add / (uint128_t)BASE;
     }
-    else if (n._data.size() > max_size)
+    else if (n._data.size() > i)
     {
       _data << (n._data[i] + rem);
       rem = 0;
     }
-    else if (_data.size() > max_size)
+    else if (_data.size() > i)
     {
       _data[i] = _data[i] + rem;
       rem = 0;
@@ -131,6 +131,18 @@ num num::operator+(const int &n) const
 num operator+(const int &n1, num n2)
 {
   return n2 += n1;
+}
+
+num & num::operator++()
+{
+  return (this->operator+=(1));
+}
+
+num num::operator++(int)
+{
+  num res = *this;
+  this->operator+=(1);
+  return res;
 }
 
 std::string num::to_s() const
