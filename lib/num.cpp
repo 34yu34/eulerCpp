@@ -38,6 +38,25 @@ void num::initialize_int(const int &n)
   }
 }
 
+bool num::operate(const num &num, bool (*fptr)(int, int)) const
+{
+  if (_data.size() == num._data.size())
+  {
+    for (uint128_t i = _data.size() - 1; i > UINT64_MAX; --i)
+    {
+      if (_data[i] != num._data[i])
+      {
+        return fptr(_data[i], num._data[i]);
+      }
+    }
+    return fptr(1, 1);
+  }
+  else
+  {
+    return fptr(_data.size(), num._data.size());
+  }
+}
+
 void num::initialize_num(const num &n)
 {
   _data = Array<uint64_t>(n._data.size(), n._data.data());
@@ -144,6 +163,30 @@ num num::operator++(int)
   this->operator+=(1);
   return res;
 }
+
+num & num::operator-=(const num & n)
+{
+  return *this;
+}
+
+bool num::operator==(const num & n) const
+{
+  return operate(n, [](int n1, int n2)
+  {
+    return n1 == n2;
+  });
+}
+
+bool num::operator==(const int & n) const
+{
+  num n2 = n;
+  return n2 == *this;
+}
+
+bool operator==(const int & n1, const num & n2)
+{
+  return n2 == n1;
+} 
 
 std::string num::to_s() const
 {

@@ -17,8 +17,9 @@ private:
     void initialize_string(std::string n);
     void initialize_int(const int & n);
     void initialize_num(const num & n);
+    bool operate(const num & n, bool (*fptr)(int, int)) const;
 
-public:
+public: 
     num();
     num(const num &n);
     num(const int &i);
@@ -36,6 +37,13 @@ public:
     friend num operator+(const int & n1, num n2);
     num & operator++();
     num operator++(int);
+
+    num & operator-=(const num & n);
+
+
+    bool operator==(const num & n) const;
+    bool operator==(const int & n) const;
+    friend bool operator==(const int & n1, const num & i);
 
     std::string to_s() const;
     friend std::ostream &operator<<(std::ostream &o, const num &n);

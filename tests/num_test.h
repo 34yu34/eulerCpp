@@ -39,6 +39,12 @@ public:
         num2 = num1;
         ASSERT(num1.to_s(), num2.to_s())
 
+        DESCRIBE("Comparison")
+        num1 = "-123456789101112131415161718192021222324252627282930";
+        num2 = "-123456789101112131415161718192021222324252627282931";
+        ASSERT(num1 == num1, true);
+        ASSERT(num1 == num2, false);
+
         DESCRIBE("Addition");
         std::string result = "3999999999999999999999999998";
         num1 = "1999999999999999999999999999";
