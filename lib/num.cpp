@@ -42,7 +42,7 @@ bool num::operate(const num &num, bool (*fptr)(int, int)) const
 {
   if (_data.size() == num._data.size())
   {
-    for (uint128_t i = _data.size() - 1; i > UINT64_MAX; --i)
+    for (uint128_t i = _data.size() - 1; i < UINT64_MAX; --i)
     {
       if (_data[i] != num._data[i])
       {
@@ -171,10 +171,7 @@ num & num::operator-=(const num & n)
 
 bool num::operator==(const num & n) const
 {
-  return operate(n, [](int n1, int n2)
-  {
-    return n1 == n2;
-  });
+  return operate(n, [](int n1, int n2){return n1 == n2;}) && (n._neg == _neg);
 }
 
 bool num::operator==(const int & n) const
@@ -187,6 +184,42 @@ bool operator==(const int & n1, const num & n2)
 {
   return n2 == n1;
 } 
+
+bool num::operator>(const num & n) const
+{
+  if (n._neg != _neg){ return !_neg; }
+  bool res = operate(n, [](int n1, int n2) { return n1 > n2; });
+  return _neg ? !res : res;
+}
+
+bool num::operator>(const int & n) const
+{
+  num n2 = n;
+  return *this > n2;
+}
+
+bool operator>(const int & n1, const num n2)
+{
+  return n2 < n1;
+}
+
+bool num::operator<(const num &n) const
+{
+  if (n._neg != _neg){return _neg;}
+  bool res = operate(n, [](int n1, int n2) { return n1 < n2; });
+  return _neg ? res : !res;
+}
+
+bool num::operator<(const int &n) const
+{
+  num n2 = n;
+  return *this < n2;
+}
+
+bool operator<(const int &n1, const num n2)
+{
+  return n2 > n1;
+}
 
 std::string num::to_s() const
 {

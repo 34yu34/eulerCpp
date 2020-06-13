@@ -40,10 +40,15 @@ public:
 
     num & operator-=(const num & n);
 
-
     bool operator==(const num & n) const;
     bool operator==(const int & n) const;
     friend bool operator==(const int & n1, const num & i);
+    bool operator>(const num & n) const;
+    bool operator>(const int & n) const;
+    friend bool operator>(const int & n1, const num & i);
+    bool operator<(const num & n) const;
+    bool operator<(const int & n) const;
+    friend bool operator<(const int &n1, const num & i);
 
     std::string to_s() const;
     friend std::ostream &operator<<(std::ostream &o, const num &n);

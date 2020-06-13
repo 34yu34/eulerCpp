@@ -8,6 +8,7 @@ class num_test : test
 private:
     num num1;
     num num2;
+    num num3;
 
 public:
     // Abstract method implementation
@@ -42,14 +43,24 @@ public:
         DESCRIBE("Comparison")
         num1 = "-123456789101112131415161718192021222324252627282930";
         num2 = "-123456789101112131415161718192021222324252627282931";
+        num3 = -34;
         ASSERT(num1 == num1, true);
         ASSERT(num1 == num2, false);
+        ASSERT(num3 == -34, true);
+        ASSERT(num3 == 34, false);
+        ASSERT(num1 > num2, true);
+        ASSERT(num1 < num2, false);
+        ASSERT(num3 > 34, false);
+        ASSERT(num3 < 34, true);
+        ASSERT(num3 > -34, false);
+        ASSERT(num3 < -34, false);
+
 
         DESCRIBE("Addition");
         std::string result = "3999999999999999999999999998";
         num1 = "1999999999999999999999999999";
         num2 = "1999999999999999999999999999";
-        num num3 = num1 + num2;
+        num3 = num1 + num2;
         ASSERT(num3.to_s(), result);
 
         num1 += num2;
