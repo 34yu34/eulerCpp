@@ -183,6 +183,7 @@ public:
     // manipulator
     ////////////////////////////////////////////////////////////////////////////////
 
+    // apply a <f> function to all elements of the array and return an array containing all the result
     template <class U, class Function>
     Array<U> map(Function f) const
     {
@@ -195,7 +196,7 @@ public:
     }
 
     /*
-     * Changes the type of the array to another type
+     * Changes the type of the array to another type ex: a.cast<int>()
     */
     template <class U>
     Array<U> cast() const
@@ -208,6 +209,7 @@ public:
         return new_data;
     }
 
+    // Create a new array containing all the element that returned true to <f> function
     template <class Function>
     Array<T> select(Function f) const
     {
@@ -222,6 +224,7 @@ public:
         return new_data;
     }
 
+    // run a function <f> on each elememts of the array
     template <class Function>
     Array<T> &each(Function f)
     {
@@ -232,6 +235,7 @@ public:
         return *this;
     }
 
+    // use starting value and then pass each of the allement of the array to a function <f> and use the result as a result
     template <class U, class Function>
     U inject(U start_val, Function f) const
     {
@@ -243,11 +247,13 @@ public:
         return adder;
     }
 
+    // return the sum of all the array elements
     T sum()
     {
         return inject(T(), [](T a, T b) { return a + b; });
     }
 
+    // remove all element of the array
     void empty()
     {
         delete data_;
@@ -260,7 +266,7 @@ public:
     // Generator
     ////////////////////////////////////////////////////////////////////////////////
 
-    // generate an array containing all value from initial_val to end_val by step step
+    // generate an array containing all value from <initial_val> to <end_val> by <step> jump
     static Array<T> range(T initial_val, T end_val, T step = 1)
     {
         Array<T> res; 
@@ -287,7 +293,7 @@ public:
         return res;
     }
 
-    // generate an array containing all integer from 0 to end_val
+    // generate an array containing all integer from 0 to <end_val>
     static Array<T> range(T end_val)
     {
         return range((T)0, end_val);
