@@ -260,6 +260,7 @@ public:
     // Generator
     ////////////////////////////////////////////////////////////////////////////////
 
+    // generate an array containing all value from initial_val to end_val by step step
     static Array<T> range(T initial_val, T end_val, T step = 1)
     {
         Array<T> res; 
@@ -286,6 +287,7 @@ public:
         return res;
     }
 
+    // generate an array containing all integer from 0 to end_val
     static Array<T> range(T end_val)
     {
         return range((T)0, end_val);
