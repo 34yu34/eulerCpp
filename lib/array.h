@@ -112,7 +112,7 @@ public:
         return data_[index];
     }
     /*
-     * gives out and remove the last element
+     * remove the last element and returns it
     */
     T pop()
     {
@@ -122,7 +122,7 @@ public:
     /*
      * copy all the data in the pointer;
     */
-    T *data() const
+    T * data() const
     {
         T *data = new T[size_];
         for (uint64_t i = 0; i < size_; ++i)
@@ -254,6 +254,41 @@ public:
         data_ = new T[BASIC_SIZE];
         size_ = 0;
         max_size_ = BASIC_SIZE;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Generator
+    ////////////////////////////////////////////////////////////////////////////////
+
+    static Array<T> range(T initial_val, T end_val, T step = 1)
+    {
+        Array<T> res; 
+        if (step > 0)
+        {
+            if (initial_val > end_val) {std::out_of_range("Empty Range");}
+            
+            res = Array<T>((int)((end_val - initial_val) / step) + 1);
+            for (T i = initial_val; i < end_val; i += step)
+            {
+                res << i;
+            }
+        }
+        else if(step < 0)
+        {
+            if (initial_val < end_val) {std::out_of_range("Empty Range");}
+            
+            res = Array<T>((int)((initial_val - end_val) / (step * -1) ) + 1);
+            for (T i = initial_val; i > end_val; i += step)
+            {
+                res << i;
+            }
+        }
+        return res;
+    }
+
+    static Array<T> range(T end_val)
+    {
+        return range((T)0, end_val);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

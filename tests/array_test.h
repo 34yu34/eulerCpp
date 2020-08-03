@@ -110,6 +110,34 @@ public:
             val = 5;
         }
         ASSERT_ARRAY(arr1.data(), data8, 5);
+
+        DESCRIBE("Test the generators")
+        IT("Should create an array with the good numbers")
+        arr1 = Array<int>::range(10);
+        int data9[] = {0,1,2,3,4,5,6,7,8,9};
+        ASSERT_ARRAY(arr1.data(), data9, 10);
+
+        arr1 = Array<int>::range(2, 6, 2);
+        int data10[] = {2, 4};
+        ASSERT_ARRAY(arr1.data(), data10, 2);
+
+        arr1 = Array<int>::range(2, 7, 2);
+        int data11[] = {2, 4, 6};
+        ASSERT_ARRAY(arr1.data(), data11, 3);
+
+        arr1 = Array<int>::range(7, 2, -1);
+        int data12[] = {7, 6, 5, 4, 3};
+        ASSERT_ARRAY(arr1.data(), data12, 5);
+
+        arr1 = Array<int>::range(7, 2, -2);
+        int data13[] = {7, 5, 3};
+        ASSERT_ARRAY(arr1.data(), data13, 3);
+
+        arr1 = Array<int>::range(6, 2, -2);
+        int data14[] = {6, 4};
+        ASSERT_ARRAY(arr1.data(), data14, 2);
+
+
     }
 
     // execution
