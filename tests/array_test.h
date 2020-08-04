@@ -101,6 +101,12 @@ public:
         IT("Should return the biggest element of the array from an inject")
         ASSERT(arr1.inject(arr1[0], [](int result, int next) { return result > next ? result : next; }), 4)
 
+        IT("Should return the biggest element of the array from max")
+        ASSERT(arr1.max(), 4)
+
+        IT("Should return the smallest element of the array from min")
+        ASSERT(arr1.min(), 1)
+
         DESCRIBE("Test the for loop")
         IT("should let range based for loop be executed")
         arr1 = {1,2,3,4,5};

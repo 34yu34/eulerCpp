@@ -183,7 +183,7 @@ public:
     // manipulator
     ////////////////////////////////////////////////////////////////////////////////
 
-    // apply a <f> function to all elements of the array and return an array containing all the result
+    // apply a <f> function to all elements of the array and return an array containing all the result in the same order.
     template <class U, class Function>
     Array<U> map(Function f) const
     {
@@ -196,7 +196,8 @@ public:
     }
 
     /*
-     * Changes the type of the array to another type ex: a.cast<int>()
+     * return a new array containing all the elements cast in <U> type
+     * usage : a.cast<int>() // return array cast in int
     */
     template <class U>
     Array<U> cast() const
@@ -209,7 +210,7 @@ public:
         return new_data;
     }
 
-    // Create a new array containing all the element that returned true to <f> function
+    // Create a new array containing all the elements that returned true when pass to <f> function
     template <class Function>
     Array<T> select(Function f) const
     {
@@ -235,7 +236,7 @@ public:
         return *this;
     }
 
-    // use starting value and then pass each of the allement of the array to a function <f> and use the result as a result
+    // apply <f> function to <start_val> and first element of the array. it then collect the result and recall <f> function on the result and the second element until the end of the array
     template <class U, class Function>
     U inject(U start_val, Function f) const
     {
@@ -247,13 +248,25 @@ public:
         return adder;
     }
 
-    // return the sum of all the array elements
+    // return the sum of all the array elements starting with a null value
     T sum()
     {
         return inject(T(), [](T a, T b) { return a + b; });
     }
 
-    // remove all element of the array
+    // return the biggest value of the array
+    T max()
+    {
+        return inject(data_[0], [](T a, T b){ return a > b ? a : b;});
+    }
+
+        // return the smallest value of the array
+    T min()
+    {
+        return inject(data_[0], [](T a, T b){ return a > b ? b : a;});
+    }
+
+    // remove all element from the array
     void empty()
     {
         delete data_;
@@ -266,7 +279,7 @@ public:
     // Generator
     ////////////////////////////////////////////////////////////////////////////////
 
-    // generate an array containing all value from <initial_val> to <end_val> by <step> jump
+    // generate an array containing all value from <initial_val> to <end_val> by <step> jumps
     static Array<T> range(T initial_val, T end_val, T step = 1)
     {
         Array<T> res; 
@@ -289,7 +302,12 @@ public:
             {
                 res << i;
             }
+        } 
+        else
+        {
+            std::out_of_range("null step value");
         }
+        
         return res;
     }
 
