@@ -27,12 +27,12 @@ public:
         DESCRIBE("verify instanciation");
 
         IT("Should instanciate with string");
-        std::string number = "-123456789101112131415161718192021222324252627282930";
+        std::string number = "123456789101112131415161718192021222324252627282930";
         num1 = number;
         ASSERT(num1.to_s(), number);
 
         IT("Should instanciate with ints");
-        int z = -298374932;
+        int z = 298374932;
         num1 = z;
         ASSERT(num1.to_s(), std::to_string(z))
         
@@ -41,19 +41,17 @@ public:
         ASSERT(num1.to_s(), num2.to_s())
 
         DESCRIBE("Comparison")
-        num1 = "-123456789101112131415161718192021222324252627282930";
-        num2 = "-123456789101112131415161718192021222324252627282931";
-        num3 = -34;
+        num1 = "123456789101112131415161718192021222324252627282930";
+        num2 = "123456789101112131415161718192021222324252627282931";
+        num3 = 34;
         ASSERT(num1 == num1, true);
         ASSERT(num1 == num2, false);
-        ASSERT(num3 == -34, true);
-        ASSERT(num3 == 34, false);
-        ASSERT(num1 > num2, true);
-        ASSERT(num1 < num2, false);
+        ASSERT(num3 == 34, true);
+        ASSERT(num3 == -34, false);
+        ASSERT(num1 > num2, false);
+        ASSERT(num1 < num2, true);
         ASSERT(num3 > 34, false);
-        ASSERT(num3 < 34, true);
-        ASSERT(num3 > -34, false);
-        ASSERT(num3 < -34, false);
+        ASSERT(num3 < 34, false);
 
 
         DESCRIBE("Addition");

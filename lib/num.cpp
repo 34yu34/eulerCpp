@@ -3,15 +3,19 @@
 
 void num::initialize_string(std::string n)
 {
-  if (n[0] == *("-") || n[0] == *("+"))
+  _data.empty();
+
+  if (n[0] == *("-"))
   {
-    _neg = n[0] == *("-");
-    n = n.substr(1);
-  } else
-  {
-    _neg = false;
+    _data << 0;
+    return;
   }
-  _data = Array<uint64_t>();
+  
+  if ( n[0] == *("+"))
+  {
+    n = n.substr(1);
+  }
+
   for (uint64_t i = 0; i < n.size(); i += BASE_LENGTH)
   {
     uint64_t num = 0;
@@ -26,11 +30,15 @@ void num::initialize_string(std::string n)
 
 void num::initialize_int(const int &n)
 {
-  _data = Array<uint64_t>();
-  _neg = n < 0;
-  uint128_t abs = (uint128_t)(n > 0 ? n : -n);
-  uint64_t top = (uint64_t)(abs / (uint128_t)BASE);
-  uint64_t bot = uint64_t(abs % (uint128_t)BASE);
+  _data.empty();
+  if (n < 0)
+  {
+    _data << 0;
+    return;
+  }
+
+  uint64_t top = (uint64_t)(n / (uint128_t)BASE);
+  uint64_t bot = (uint64_t)(n % (uint128_t)BASE);
   _data << bot;
   if (top)
   {
@@ -42,7 +50,7 @@ bool num::operate(const num &num, bool (*fptr)(int, int)) const
 {
   if (_data.size() == num._data.size())
   {
-    for (uint128_t i = _data.size() - 1; i < UINT64_MAX; --i)
+    for (uint128_t i = _data.size() - 1; i < UINT64_MAX + 1; --i) // once equal to 0 it will overflow back to UINT128_MAX
     {
       if (_data[i] != num._data[i])
       {
@@ -51,34 +59,30 @@ bool num::operate(const num &num, bool (*fptr)(int, int)) const
     }
     return fptr(1, 1);
   }
-  else
-  {
-    return fptr(_data.size(), num._data.size());
-  }
+  return fptr(_data.size(), num._data.size());
 }
 
 void num::initialize_num(const num &n)
 {
   _data = Array<uint64_t>(n._data.size(), n._data.data());
-  _neg = n._neg;
 }
 
-num::num() : _data(), _neg(false)
+num::num() : _data()
 {
   _data << 0;
 }
 
-num::num(const num &n)
+num::num(const num &n): _data()
 {
   initialize_num(n);
 }
 
-num::num(const std::string &n)
+num::num(const std::string &n): _data()
 {
   initialize_string(n);
 }
 
-num::num(const int &n)
+num::num(const int &n): _data()
 {
   initialize_int(n);
 }
@@ -171,7 +175,7 @@ num & num::operator-=(const num & n)
 
 bool num::operator==(const num & n) const
 {
-  return operate(n, [](int n1, int n2){return n1 == n2;}) && (n._neg == _neg);
+  return operate(n, [](int n1, int n2){return n1 == n2;});
 }
 
 bool num::operator==(const int & n) const
@@ -187,9 +191,7 @@ bool operator==(const int & n1, const num & n2)
 
 bool num::operator>(const num & n) const
 {
-  if (n._neg != _neg){ return !_neg; }
-  bool res = operate(n, [](int n1, int n2) { return n1 > n2; });
-  return _neg ? !res : res;
+  return operate(n, [](int n1, int n2) { return n1 > n2; });
 }
 
 bool num::operator>(const int & n) const
@@ -205,9 +207,7 @@ bool operator>(const int & n1, const num n2)
 
 bool num::operator<(const num &n) const
 {
-  if (n._neg != _neg){return _neg;}
-  bool res = operate(n, [](int n1, int n2) { return n1 < n2; });
-  return _neg ? res : !res;
+  return operate(n, [](int n1, int n2) { return n1 < n2; });
 }
 
 bool num::operator<(const int &n) const
@@ -223,8 +223,6 @@ bool operator<(const int &n1, const num n2)
 
 std::string num::to_s() const
 {
-
-  std::string front = _neg ? "-" : "";
   std::string rep = "";
   for (uint64_t i = 0; i < _data.size(); ++i)
   {
@@ -238,7 +236,7 @@ std::string num::to_s() const
     }
     rep = str_val + rep;
   }
-  return front + rep;
+  return rep;
 }
 
 std::ostream &operator<<(std::ostream &o, const num &n)
