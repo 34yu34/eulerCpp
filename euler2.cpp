@@ -1,7 +1,6 @@
 #include "iostream"
 #include "enumerable.h"
 #include "lib/enumerable_generator.h"
-#include "bignum.h"
 
 using namespace std;
 

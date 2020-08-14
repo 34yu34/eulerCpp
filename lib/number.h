@@ -3,7 +3,6 @@
 #include "iostream"
 #include "enumerable.h"
 #include "array.h"
-#include "bignum.h"
 
 namespace Number
 {

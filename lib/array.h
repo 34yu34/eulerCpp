@@ -1,9 +1,17 @@
 #pragma once
 
-#include <iostream>
+#define HEAVY true 
+
 #include <cstdint>
+
+#if HEAVY
+#include <iostream>
+#include <stdio.h>
 #include <exception>
 #include <initializer_list>
+#endif
+
+
 
 template <class T>
 class Array
@@ -46,8 +54,6 @@ public:
         : size_(size), max_size_(size)
     {
         data_ = new T[size];
-        max_size_ = size;
-        size = size;
         for (uint64_t i = 0; i < size; ++i)
         {
             data_[i] = data[i];
@@ -77,6 +83,7 @@ public:
         return *this;
     }
 
+#if HEAVY
     Array(std::initializer_list<T> list)
         : size_(0), max_size_(BASIC_SIZE)
     {
@@ -86,6 +93,7 @@ public:
             push(item);
         }
     }
+#endif
 
     ~Array()
     {
@@ -182,7 +190,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////
     // manipulator
     ////////////////////////////////////////////////////////////////////////////////
-
+#if HEAVY
     // apply a <f> function to all elements of the array and return an array containing all the result in the same order.
     template <class U, class Function>
     Array<U> map(Function f) const
@@ -265,7 +273,7 @@ public:
     {
         return inject(data_[0], [](T a, T b){ return a > b ? b : a;});
     }
-
+#endif
     // remove all element from the array
     void empty()
     {
@@ -278,14 +286,14 @@ public:
     ////////////////////////////////////////////////////////////////////////////////
     // Generator
     ////////////////////////////////////////////////////////////////////////////////
-
+#if HEAVY
     // generate an array containing all value from <initial_val> to <end_val> by <step> jumps
     static Array<T> range(T initial_val, T end_val, T step = 1)
     {
         Array<T> res; 
         if (step > 0)
         {
-            if (initial_val > end_val) {std::out_of_range("Empty Range");}
+            if (initial_val > end_val) {throw std::out_of_range("Empty Range");}
             
             res = Array<T>((int)((end_val - initial_val) / step) + 1);
             for (T i = initial_val; i < end_val; i += step)
@@ -295,7 +303,7 @@ public:
         }
         else if(step < 0)
         {
-            if (initial_val < end_val) {std::out_of_range("Empty Range");}
+            if (initial_val < end_val) {throw std::out_of_range("Empty Range");}
             
             res = Array<T>((int)((initial_val - end_val) / (step * -1) ) + 1);
             for (T i = initial_val; i > end_val; i += step)
@@ -305,22 +313,22 @@ public:
         } 
         else
         {
-            std::out_of_range("null step value");
+            throw std::out_of_range("null step value");
         }
         
         return res;
     }
-
     // generate an array containing all integer from 0 to <end_val>
     static Array<T> range(T end_val)
     {
         return range((T)0, end_val);
     }
+#endif 
 
     ////////////////////////////////////////////////////////////////////////////////
     // informations
     ////////////////////////////////////////////////////////////////////////////////
-
+#if HEAVY
     friend std ::ostream &operator<<(std::ostream &o, const Array &en)
     {
         o << "[";
@@ -336,6 +344,7 @@ public:
         o << "]";
         return o;
     }
+#endif
 
     // return true in a boolean operation if the enumerable is not empty
     explicit operator bool() const
@@ -364,7 +373,11 @@ private:
     {
         if (index >= size_)
         {
+#if HEAVY
             throw std::out_of_range("index doesn't exist");
+#else
+            throw "index doesn't exist";
+#endif
         }
     }
 
@@ -395,7 +408,11 @@ private:
     {
         if ((uint64_t)size_ + (uint64_t)amount > UINT32_MAX)
         {
+#if HEAVY
             throw std::out_of_range("Array is too full");
+#else
+            throw "Array is too full";
+#endif
         }
     }
 };

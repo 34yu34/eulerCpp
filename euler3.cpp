@@ -1,7 +1,6 @@
 #include "iostream"
 #include "vector"
 #include "enumerable.h"
-#include "bignum.h"
 #include "number.h"
 
 using namespace std;
