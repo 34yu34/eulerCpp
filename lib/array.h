@@ -11,8 +11,6 @@
 #include <initializer_list>
 #endif
 
-
-
 template <class T>
 class Array
 {
@@ -125,6 +123,16 @@ public:
     T pop()
     {
         return data_[--size_];
+    }
+
+    T first() const
+    {
+        return data_[0];
+    }
+
+    T last() const
+    {
+        return data_[size_-1];
     }
 
     /*

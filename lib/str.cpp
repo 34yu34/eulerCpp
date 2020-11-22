@@ -115,6 +115,11 @@ str str::operator-(str str) const
   return *this;
 }
 
+str str::operator<<(const str & str)
+{
+  return *this += str;
+}
+
 
 ostream & operator<<(ostream & o,const str & text)
 {

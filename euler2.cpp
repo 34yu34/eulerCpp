@@ -1,13 +1,16 @@
 #include "iostream"
-#include "enumerable.h"
-#include "lib/enumerable_generator.h"
+#include "fibonacci.h"
+#include "array.h"
 
 using namespace std;
 
 int main(int argc, char const *argv[])
 {
-     cout << Enumerable_Generator::get().fibonacci_max(4000000)
-            .select([](const int & a){return (a % 2 == 0);})
-            .sum();
+    Fibonacci f = Fibonacci<uint64_t>::until([](uint64_t i) { return i < 4000000 ; });
+
+    f.get_array().each([](uint64_t i) {
+        cout << i << endl; 
+    });
+
     return 0;
 }

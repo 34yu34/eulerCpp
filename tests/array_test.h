@@ -142,8 +142,6 @@ public:
         arr1 = Array<int>::range(6, 2, -2);
         int data14[] = {6, 4};
         ASSERT_ARRAY(arr1.data(), data14, 2);
-
-
     }
 
     // execution

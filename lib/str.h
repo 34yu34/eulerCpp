@@ -38,5 +38,7 @@ public:
   str & operator-=(const string & str);
   str & operator-=(const char & c);
   str operator-(str str) const;
+  str operator<<(const str & str);
+
   friend ostream & operator<<(ostream & o, const str & text); 
 };
