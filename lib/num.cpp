@@ -4,11 +4,11 @@
 void num::initialize_string(std::string n)
 {
   _data.empty();
+  short multiplier = 1;
 
   if (n[0] == *("-"))
   {
-    _data << 0;
-    return;
+    multiplier = -1;
   }
   
   if ( n[0] == *("+"))

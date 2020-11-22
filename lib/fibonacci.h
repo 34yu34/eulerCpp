@@ -39,8 +39,9 @@ public:
         Fibonacci suit;
         while (!f(suit._data.last()))
         {
-            suit._data << _data[_data.size() - 2] + _data.last();
+            suit._data << suit._data[suit._data.size() - 2] + suit._data.last();
         }
+        return suit;
     }
 
     static T N(const uint64_t n)

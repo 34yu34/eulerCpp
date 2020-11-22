@@ -8,11 +8,10 @@ typedef unsigned __int128 uint128_t;
 class num
 {
 private:
-    Array<uint64_t> _data;
-    bool _neg;
+    Array<int32_t> _data;
 
-    static const uint64_t BASE = 10000000000000000000U;
-    static const uint32_t BASE_LENGTH = 19; // 10^19 gives BASE
+    static const unsigned int BASE = 1000000000;
+    static const unsigned short BASE_LENGTH = 9; // 10^9 gives BASE
 
     void initialize_string(std::string n);
     void initialize_int(const int & n);
